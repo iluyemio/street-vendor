@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Admin Dashboard</title>
+    <link rel='preconnect' href='https://fonts.googleapis.com'>
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel='stylesheet' href='/styles.css'>
+    <link rel="stylesheet" href="/styles2.css">
+</head>
+
+<body>
+    <div class='nav'>
+        <div class='container nav-inner'>
+            <a class='brand'>
+                <div class='logo'>✓</div>
+                <div>
+                    <div class='brand-title'>Street Vendor Verified</div>
+                    <div class='brand-sub page-title2'>Administrator Dashboard</div>
+                </div>
+            </a>
+
+            <div class="nav-dashboard">
+                <a href="/index.html" class="btn">Home</a>
+
+                <a href="/dashboard/vendor-login.html" class="btn-signout">Logout</a>
+
+                <div class="profile-container" id="profileTrigger">
+                    <div class="profile-circle">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
+                    </div>
+
+                    <div class="profile-dropdown">
+                        <div class="dropdown-content">
+                            <p class="vendor-name">Daren Ola</p>
+                            <p class="vendor-email">daren.o@streetvendor.com</p>
+                            <div class="status-badge verified">
+                                <i class="fas fa-check-circle"></i> Administrator
+                            </div>
+                            <hr>
+                            <a href="account-settings.html">Account Settings</a>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="account-settings.html" class="btn-account"><i class="fa-solid fa-user-gear"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <section class='page-hero'>
+        <div class='container reveal'>
+            <h1 class='page-title'> Vendor Database </h1>
+            <hr>
+            <div class='breadcrumb btn-secondary'>
+                <a href='admin-dashboard.html' class="dashboard">Administrator Dashboard</a>
+
+                <i class="fa-sharp fa-solid fa-angle-right success-green"></i>
+
+                <p class="active"> Vendor Database </p>
+            </div>
+        </div>
+    </section>
+
+    <section class='section' style='padding-top:10px'>
+        <div class='container grid-4'>
+            <div class='stat-card metric-card reveal'>
+                <div class='metric-label total'>Total Vendors</div>
+                <div class='metric-value'>1,329</div>
+            </div>
+            <div class='stat-card metric-card reveal'>
+                <div class='metric-label verified'>Verified Vendors</div>
+                <div class='metric-value'>1,204</div>
+            </div>
+            <div class='stat-card metric-card reveal'>
+                <div class='metric-label denied'>Denied</div>
+                <div class='metric-value'>45</div>
+            </div>
+            <div class='stat-card metric-card reveal'>
+                <div class='metric-label pending'>Pending Applications</div>
+                <div class='metric-value'>18</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+
+        <div class="database-container">
+            <main class="table-section">
+                <div class="card card-table">
+                    <div class="card-header-database">
+                        <h2>Vendor Database</h2>
+                        <div class="head-btn">
+                            <button class="btn-export"><i class="fas fa-download"></i> Export CSV</button>
+                            <button class="btn-sidebar"><i class="fas fa-user-plus"></i> Add New Vendor</button>
+                        </div>
+
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="vendorTable">
+                            <thead>
+                                <tr>
+                                    <th>Vendor</th>
+                                    <th>Name</th>
+                                    <th>ID</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vendorBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="insight-sidebar">
+
+                <div class="card insight-card">
+                    <h3>Vendor Distribution</h3>
+
+                    <div class="chart-main-container">
+                        <div class="svg-wrapper">
+                            <svg viewBox="0 0 100 100" id="pie-chart">
+                            </svg>
+                        </div>
+
+                        <div class="legend-container" id="legend">
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <!-- POPUP MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card">
+            <button class="close-modal" id="closeModal">&times;</button>
+
+            <div class="modal-header-hero">
+                <h1 class="page-title">Vendor Profile</h1>
+            </div>
+
+            <div class="modal-body grid-list">
+                <div class="card o-card profile-avatar-box">
+                    <div class="avatar-large">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Vendor Photo">
+                    </div>
+                </div>
+
+                <div class="card o-card profile-info-box">
+                    <div class="card-row">
+                        <h3>James K.</h3>
+                        <span class="badge green">Verified</span>
+                        <a href="vendor-dashboard.html" class="dashboard-button">Visit Dashboard</a>
+                    </div>
+                    <p class="muted">Inside Success</p>
+
+                    <div class="meta-grid">
+                        <div class="field">
+                            <label>Vendor ID</label>SVV-10293
+                        </div>
+                        <div class="field">
+                            <label>Valid Until</label>15 June 2026
+                        </div>
+                        <div class="field full-width">
+                            <label>Issued By</label>Street Vendor Standards Council
+                        </div>
+                    </div>
+
+                    <p class="auth-text">This vendor is currently verified and authorized within the system.</p>
+
+                    <div class="hero-actions">
+                        <button class="verify">Verify</button>
+                        <button class="reject">Reject</button>
+                        <button class="suspend">Suspend</button>
+                        <button class="delete">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addVendorModal">
+        <div class="modal-card">
+            <button class="close-modal" id="closeAddModal">&times;</button>
+
+            <div class="modal-header-hero">
+                <h1 class="page-title">Add New Vendor</h1>
+                <p class="page-lead">Register a new vendor into the Standards Council database</p>
+            </div>
+
+            <form id="newVendorForm" class="modal-body2">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="newVendorName">Full Name</label>
+                        <input type="text" id="newVendorName" placeholder="e.g. James Kallean" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="newVendorID">Vendor ID</label>
+                        <input type="text" id="newVendorID" placeholder="e.g. SVV-XXXXX" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="newVendorOrg">Organization / Company</label>
+                        <input type="text" id="newVendorOrg" placeholder="e.g. Inside Success" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="newVendorExpiry">Valid Until</label>
+                        <input type="date" id="newVendorExpiry" required>
+                    </div>
+                </div>
+
+                <div class="hero-actions full-width">
+                    <button type="submit" class="verify">Create Vendor Account</button>
+                    <button type="button" class="cancel" id="cancelAdd">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class='container footer'>Street Vendor Verified · Issued by Street Vendor Standards Council</div>
+    <script src='/script.js'>
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Admin Dashboard</title>
+    <link rel='preconnect' href='https://fonts.googleapis.com'>
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel='stylesheet' href='/styles.css'>
+</head>
+
+<body>
+    <div class='nav'>
+        <div class='container nav-inner'>
+            <a class='brand'>
+                <div class='logo'>✓</div>
+                <div>
+                    <div class='brand-title'>Street Vendor Verified</div>
+                    <div class='brand-sub page-title2'>Administrator Dashboard</div>
+                </div>
+            </a>
+
+            <div class="nav-dashboard">
+
+                <a href="/index.html" class="btn">Home</a>
+
+                <a href="/dashboard/admin-login.html" class="btn-signout">Logout</a>
+
+                <div class="profile-container" id="profileTrigger">
+                    <div class="profile-circle">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
+                    </div>
+
+                    <div class="profile-dropdown">
+                        <div class="dropdown-content">
+                            <p class="vendor-name">Daren Ola</p>
+                            <p class="vendor-email">daren.o@streetvendor.com</p>
+                            <div class="status-badge verified">
+                                <i class="fas fa-check-circle"></i> Administrator
+                            </div>
+                            <hr>
+                            <a href="account-settings.html">Account Settings</a>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="account-settings.html" class="btn-account"><i class="fa-solid fa-user-gear"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <section class='page-hero'>
+        <div class='container reveal'>
+            <div class="hero-header">
+                <h1 class='page-title'><span>Welcome, </span> Daren </h1>
+                <div>
+                    <a href="vendor-database.html" class="btn-management">
+                        <div class="btn-icon"><i class="fas fa-database"></i></div>
+                        <span class="btn-label">Vendor Database</span>
+                    </a>
+                </div>
+            </div>
+
+            <hr>
+            <p class='page-lead'>Control centre for approvals, suspensions, renewals, and record review.</p>
+        </div>
+    </section>
+
+    <section class='section' style='padding-top:10px'>
+        <div class='container grid-3'>
+            <div class='stat-card metric-card reveal'>
+                <div class='metric-label total'>Total Vendors</div>
+                <div class='metric-value'>1,329</div>
+            </div>
+            <div class='stat-card metric-card reveal'>
+                <div class='metric-label verified'>Verified Vendors</div>
+                <div class='metric-value'>1,204</div>
+            </div>
+            <div class='stat-card metric-card reveal'>
+                <div class='metric-label denied'>Denied</div>
+                <div class='metric-value'>45</div>
+            </div>
+            <div class='stat-card metric-card reveal'>
+                <div class='metric-label pending'>Pending Applications</div>
+                <div class='metric-value'>18</div>
+            </div>
+            <div class='stat-card metric-card reveal'>
+                <div class='metric-label suspended'>Suspended</div>
+                <div class='metric-value'>7</div>
+            </div>
+            <div class='stat-card metric-card reveal'>
+                <div class='metric-label expiring'>Expiring Soon</div>
+                <div class='metric-value'>55</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        <div class="admin-dashboard-wrapper">
+
+            <div class="dashboard-grid">
+
+                <main class="main-dashboard-content">
+
+                    <section class="card vendor-applications-card">
+                        <div class="card-header">
+                            <h3>Vendor Applications</h3>
+                            <div class="status-filters" id="statusFilters">
+                                <span class="filter-tab total active" data-status="all">All</span>
+                                <span class="filter-tab verified" data-status="verified">Verified</span>
+                                <span class="filter-tab pending" data-status="pending">Pending</span>
+                                <span class="filter-tab denied" data-status="denied">Denied</span>
+                            </div>
+                        </div>
+                        <div class="application-list" id="applicationList">
+                        </div>
+                    </section>
+
+                    <section class="card system-management-card">
+                        <div class="card-header">
+                            <h3>System Management</h3>
+                        </div>
+                        <div class="management-buttons">
+                            <a href="vendor-database.html" class="btn-management">
+                                <div class="btn-icon"><i class="fas fa-database"></i></div>
+                                <span class="btn-label">Vendor Database</span>
+                            </a>
+                            <a href="compliance.html" class="btn-management">
+                                <div class="btn-icon"><i class="fas fa-shield-alt"></i></div>
+                                <span class="btn-label">Compliance Monitoring</span>
+                            </a>
+                            <a href="reports.html" class="btn-management">
+                                <div class="btn-icon"><i class="fas fa-chart-line"></i></div>
+                                <span class="btn-label">Admin Reports</span>
+                            </a>
+                        </div>
+                    </section>
+                </main>
+
+                <aside class="recent-activities-content">
+                    <section class="card recent-activity-card">
+                        <div class="card-header">
+                            <h3>Recent Activity</h3>
+                        </div>
+                        <div class="activity-feed">
+                            <div class="activity-item">
+                                <div class="activity-dot blue-dot"></div>
+                                <div class="activity-text unread">
+                                    <span class="vendor-name">Maria R.</span>
+                                    <span class="activity-action">added a new Food Cart.</span>
+                                    <span class="activity-time">3 mins ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-dot blue-dot"></div>
+                                <div class="activity-text unread">
+                                    <span class="vendor-name">Carlos S.</span>
+                                    <span class="activity-action">updated their account profile.</span>
+                                    <span class="activity-time">12 mins ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-dot green-dot"></div>
+                                <div class="activity-text">
+                                    <span class="vendor-name">Rice T.</span>
+                                    <span class="activity-action">was marked as verified.</span>
+                                    <span class="activity-time">45 mins ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-dot amber-dot"></div>
+                                <div class="activity-text">
+                                    <span class="vendor-name">James K.</span>
+                                    <span class="activity-action">submitted a verification request.</span>
+                                    <span class="activity-time">1 hr ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-dot red-dot"></div>
+                                <div class="activity-text">
+                                    <span class="vendor-name">Maria R.</span>
+                                    <span class="activity-action">Account deletion request for Maria P.</span>
+                                    <span class="activity-time">2 hrs ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+
+    <div class='container footer'>Street Vendor Verified · Issued by Street Vendor Standards Council</div>
+    <script src='/script.js'>
+
+    </script>
+</body>
+
+</html>

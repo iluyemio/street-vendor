@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Street Vendor Verified</title>
+    <link rel='preconnect' href='https://fonts.googleapis.com'>
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel='stylesheet' href='styles.css'>
+</head>
+
+<body>
+    <div class='nav'>
+        <div class='container nav-inner'>
+            <a href='index.html' class='brand'>
+                <div class='logo'>✓</div>
+                <div>
+                    <div class='brand-title'>Street Vendor Verified</div>
+                    <div class='brand-sub'>Issued by Street Vendor Standards Council</div>
+                </div>
+            </a>
+
+            <div class='nav-links'>
+                <a href='verify.html'>Verify</a>
+                <a href='apply.html'>Apply</a>
+                <a href='organisations.html'>Organisations</a>
+                <a href='report.html'>Report</a>
+                <a href='faq.html'>FAQ</a>
+                <a href='contact.html'>Contact</a>
+                <a href='/dashboard/vendor-login.html' class='renew-btn' style='padding:10px 16px'>Vendor Login</a>
+                <a href='/dashboard/admin-login.html' class='admin-btn' style='padding:10px 16px'>Admin Login</a>
+            </div>
+
+        </div>
+    </div>
+
+    <section class='page-hero'>
+        <div class='container reveal'>
+            <h1 class='page-title'>Vendor Profile</h1>
+            <p class='page-lead'>Public-facing verification details shown after a successful check.</p>
+        </div>
+    </section>
+
+    <section class='section' style='padding-top:10px'>
+        <div class='container grid-2'>
+            <div class='card o-card reveal' style='display:grid;place-items:center;min-height:360px'>
+                <div class='avatar' style='width:220px;height:220px;border-radius:28px'>
+                    <img src='https://randomuser.me/api/portraits/men/32.jpg' alt='Vendor Photo'
+                        style='width:100%;height:100%;object-fit:cover;border-radius:28px'>
+                </div>
+            </div>
+            <div class='card o-card reveal'>
+                <div class='card-row'>
+                    <h2>James K.</h2>
+                    <span class='badge green'>Verified</span>
+                </div>
+                <p class='muted' style='margin-top:8px'>Inside Success</p>
+                <div class='meta-grid' style='margin-top:18px'>
+                    <div class='field'>
+                        <label>Vendor ID</label>SVV-10293
+                    </div>
+                    <div class='field'>
+                        <label>Valid Until</label>15 June 2026
+                    </div>
+                    <div class='field' style='grid-column:1/-1'>
+                        <label>Issued By</label>Street Vendor Standards Council
+                    </div>
+                </div>
+                <p style='margin-top:18px;font-weight:800'>This vendor is currently verified and authorised within the
+                    system.</p>
+                <div class='hero-actions'>
+                    <a class='btn btn-secondary' href='report.html'>Report this vendor</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class='container footer'>Street Vendor Verified · Issued by Street Vendor Standards Council</div>
+    <script src='script.js'>
+
+    </script>
+</body>
+
+</html>

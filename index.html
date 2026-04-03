@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Street Vendor Verified</title>
+    <link rel='preconnect' href='https://fonts.googleapis.com'>
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel='stylesheet' href='styles.css'>
+</head>
+
+<body>
+    <div class='nav'>
+        <div class='container nav-inner'>
+            <a href='index.html' class='brand'>
+                <div class='logo'>✓</div>
+                <div>
+                    <div class='brand-title'>Street Vendor Verified</div>
+                    <div class='brand-sub'>Issued by Street Vendor Standards Council</div>
+                </div>
+            </a>
+
+            <div class='nav-links'>
+                <a href='verify.html'>Verify</a>
+                <a href='apply.html'>Apply</a>
+                <a href='organisations.html'>Organisations</a>
+                <a href='report.html'>Report</a>
+                <a href='faq.html'>FAQ</a>
+                <a href='contact.html'>Contact</a>
+                <a href='/dashboard/vendor-login.html' class='renew-btn' style='padding:10px 16px'>Vendor Login</a>
+                <a href='/dashboard/admin-login.html' class='admin-btn' style='padding:10px 16px'>Admin Login</a>
+            </div>
+
+        </div>
+    </div>
+
+    <section class='hero'>
+        <div class='container hero-grid'>
+            <div class='reveal'>
+                <div class='kicker'>Public trust infrastructure</div>
+                <h1 style='margin-top:16px'>Verify Street Vendors. Instantly.</h1>
+                <p class='lead'>Check whether a vendor is officially verified in seconds using their ID or QR code.
+                    Built for speed, authority, and mobile-first trust in the street economy.</p>
+                <div class='hero-actions'>
+                    <a class='btn btn-primary' href='verify.html'>Verify a Vendor</a>
+                    <a class='btn btn-secondary' href='apply.html'>Apply for Verification</a>
+                </div>
+
+                <div class='panel search-strip'>
+                    <input class='input' placeholder='Enter Vendor ID or Scan QR'>
+                    <a class='btn btn-green' href='vendor-profile.html'>Verify</a>
+                </div>
+                <div class='pill-nav' style='margin-top:14px'>
+                    <span class='kbd'>Fast public checks</span>
+                    <span class='kbd'>QR-linked status</span>
+                    <span class='kbd'>Council-ready trust layer</span>
+                </div>
+            </div>
+
+            <div class="hero-image-block">
+                <img src="hero-img.png" alt="Street Vendor Standards Council Checked Stall" class="hero-main-img">
+            </div>
+        </div>
+    </section>
+
+    <section class='section'>
+        <div class='container'>
+            <div class='section-head reveal'>
+                <div class="sub-hero">
+                    <hr>
+                    <h2>How it works</h2>
+                    <p class='muted' style='margin-top:8px'>A simple system built around instant public clarity.</p>
+                </div>
+            </div>
+            <div class='grid-4'>
+                <div class='card feature-card'>
+                    <div class='icon'><i class="fa-solid fa-arrow-pointer"></i></div>
+                    <h3>Apply</h3>
+                    <p style='margin-top:8px'>Vendor or organisation submits verification details for review.</p>
+                </div>
+
+                <div class='card feature-card reveal'>
+                    <div class='icon'><i class="fa-solid fa-code-compare"></i></div>
+                    <h3>Review</h3>
+                    <p style='margin-top:8px'>Identity and organisation are checked against approval criteria.</p>
+                </div>
+                <div class='card feature-card reveal'>
+                    <div class='icon'><i class="fa-solid fa-check-to-slot"></i></div>
+                    <h3>Get verified</h3>
+                    <p style='margin-top:8px'>Approved vendors receive an ID and QR-linked profile.</p>
+                </div>
+                <div class='card feature-card reveal'>
+                    <div class='icon'><i class="fa-solid fa-hourglass-half"></i></div>
+                    <h3>Scan to confirm</h3>
+                    <p style='margin-top:8px'>The public sees a clear verified, suspended, or not-found result.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class='section'>
+        <div class='container'>
+            <div class='section-head reveal'>
+                <div class="sub-hero">
+                    <hr>
+                    <h2>Get Street Vendor Verified</h2>
+                    <p class='muted' style='margin-top:8px'>Join the Street Vendor Verified Program!</p>
+                </div>
+            </div>
+
+            <div class='grid-5 verified'>
+                <div class='vendor-card'>
+                    <img src="verify-icon.png" alt="Verify Icon">
+                    <h4>Get Official Verification</h4>
+                </div>
+
+                <div class='vendor-card'>
+                    <img src="customer.png" alt="Customer Icon">
+                    <h4>Build Customer Trust</h4>
+                </div>
+
+                <div class='vendor-card'>
+                    <img src="sales.png" alt="Customer Icon">
+                    <h4>Increase Your Sales</h4>
+                </div>
+
+                <div class='vendor-card'>
+                    <img src="store.png" alt="Customer Icon">
+                    <h4>Intence Resources</h4>
+                </div>
+
+                <div class='vendor-card'>
+                    <img src="resource.png" alt="Customer Icon">
+                    <h4>Access Resources & Support</h4>
+                </div>
+            </div>
+
+            <div class="apply-container">
+                <div class="apply-card">
+
+                    <div class="form-header">
+                        <hr class="rule">
+                        <h1>Apply Now!</h1>
+                        <hr class="rule">
+                    </div>
+
+                    <form id="applyForm">
+                        <div class="form-row grid-2">
+                            <input type="text" id="firstName" placeholder="First Name" required>
+                            <input type="text" id="lastName" placeholder="Last Name" required>
+                        </div>
+
+                        <div class="form-row grid-2">
+                            <input type="email" id="emailAddress" placeholder="Email Address" required>
+                            <input type="text" id="organisationName" placeholder="Organisation Name" required>
+                        </div>
+
+                        <div class="form-action">
+                            <button type="submit" class="btn-submit">Apply Now!</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column brand-info">
+                    <h2 class="footer-logo">SVSC</h2>
+                    <p>Empowering the street economy through official verification, trust, and standardized
+                        infrastructure. Built for speed and authority.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="verify.html">Verify Vendor</a></li>
+                        <li><a href="apply.html">Apply Now</a></li>
+                        <li><a href="#">Resources</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Standards Council HQ, Digital Way</p>
+                    <p><i class="fas fa-envelope"></i> support@svsc.gov</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 000-1234</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Street Vendor Verified · Issued by Street Vendor Standards Council. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src='script.js'></script>
+</body>
+
+</html>

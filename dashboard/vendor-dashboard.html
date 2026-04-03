@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Vendor Dashboard</title>
+    <link rel='preconnect' href='https://fonts.googleapis.com'>
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel='stylesheet' href='/styles.css'>
+</head>
+
+<body>
+    <div class='nav'>
+        <div class='container nav-inner'>
+            <a class='brand'>
+                <div class='logo'>✓</div>
+                <div>
+                    <div class='brand-title'>Street Vendor Verified</div>
+                    <div class='brand-sub page-title2'>Vendor Dashboard</div>
+                </div>
+            </a>
+
+            <div class="nav-dashboard">
+                <a href="/index.html" class="btn">Home</a>
+                
+                <a href="/dashboard/vendor-login.html" class="btn-signout">Logout</a>
+
+                <div class="profile-container" id="profileTrigger">
+                    <div class="profile-circle">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
+                    </div>
+
+                    <div class="profile-dropdown">
+                        <div class="dropdown-content">
+                            <p class="vendor-name">James Bolaji</p>
+                            <p class="vendor-email">james.b@tealbinternational.com</p>
+                            <div class="status-badge verified">
+                                <i class="fas fa-check-circle"></i> Verified Vendor
+                            </div>
+                            <hr>
+                            <a href="/dashboard/account-settings.html">Account Settings</a>
+                            <a class="account-delete">Delete Account</a>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="/dashboard/account-settings.html" class="btn-account"><i class="fa-solid fa-user-gear"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <section class='page-hero'>
+        <div class='container reveal'>
+            <h1 class='page-title'><span>Welcome, </span> James </h1>
+            <hr>
+            <p class='page-lead'>Utility-first vendor area focused on status, renewal, and QR visibility.</p>
+        </div>
+    </section>
+
+    <section class='section' style='padding-top:10px'>
+        <div class='container grid-3'>
+            <div class='card metric-card reveal'>
+                <div class='metric-label'>Status</div>
+                <div class='metric-value-status'>Verified</div>
+                <span class='badge green'>Active</span>
+            </div>
+            <div class='card metric-card reveal'>
+                <div class='metric-label'>Vendor ID</div>
+                <div class='metric-value'>SVV-10293</div>
+            </div>
+            <div class='card metric-card reveal'>
+                <div class='metric-label'>Expires In</div>
+                <div class='metric-value'>76 Days</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container grid-2">
+            <div class="dashboard-widget">
+                <div class="dashboard-wrapper">
+                    <div class="badge-column">
+                        <div class="verified-card">
+                            <div class="verified-header">
+                                <h1>VERIFIED</h1>
+                            </div>
+
+                            <div class="profile-details-card">
+                                <div class="profile-header">
+                                    <div class="photo-wrapper">
+                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User Portrait"
+                                            id="profile-photo" class="profile-photo">
+                                    </div>
+
+                                    <div class="header-text">
+                                        <h2>James K.</h2>
+                                        <p>Steedless Vendor</p>
+                                        <p class="sub-text">Stuart Sensor</p>
+                                    </div>
+
+                                    <div class="action-buttons">
+                                        <button class="btn btn-primary renew-btn">Renew Now <i
+                                                class="fas fa-chevron-right"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class='meta-grid' style='margin:18px 0'>
+                                    <div class='field'>
+                                        <label>Vendor ID</label>SVV-10293
+                                    </div>
+                                    <div class='field'>
+                                        <label>Valid Until</label>15 June 2026
+                                    </div>
+                                    <div class='field' style='grid-column:1/-1'>
+                                        <label>Issued By</label>Street Vendor Standards Council
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-widget">
+                <div class="top-section">
+                    <ul class="stats-list">
+                        <li>
+                            <span class="label">Verification Status:</span>
+                            <span class="value status-verify">
+                                <i class="fas fa-check-circle"></i> VERIFIED
+                            </span>
+                        </li>
+
+                        <li>
+                            <span class="label">Sales This Week:</span>
+                            <span class="value">$1,250</span>
+                        </li>
+
+                        <li>
+                            <span class="label">Customer Ratings:</span>
+                            <span class="value star-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span class="rating-num">(4.8)</span>
+                            </span>
+                        </li>
+
+                        <li>
+                            <span class="label">Compliance Tasks:</span>
+                            <span class="value">2 Pending</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <div class="footer-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Tips & Resources</span>
+                    </div>
+                    <div class="footer-item">
+                        <i class="fas fa-headset"></i>
+                        <span>Support Center</span>
+                    </div>
+                    <div class="footer-item">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Report an Issue</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class='container footer'>Street Vendor Verified · Issued by Street Vendor Standards Council</div>
+    <script src='/script.js'></script>
+</body>
+
+</html>

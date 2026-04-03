@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <meta charset='UTF-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <title>Street Vendor Verified</title>
+        <link rel='preconnect' href='https://fonts.googleapis.com'>
+        <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+        <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap' rel='stylesheet'>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel='stylesheet' href='styles.css'>
+    </head>
+    <body>
+        <div class='nav'>
+            <div class='container nav-inner'>
+                <a href='index.html' class='brand'>
+                    <div class='logo'>✓</div>
+                    <div>
+                        <div class='brand-title'>Street Vendor Verified</div>
+                        <div class='brand-sub'>Issued by Street Vendor Standards Council</div>
+                    </div>
+                </a>
+                
+                <div class='nav-links'>
+                    <a href='verify.html' class="active">Verify</a>
+                    <a href='apply.html'>Apply</a>
+                    <a href='organisations.html'>Organisations</a>
+                    <a href='report.html'>Report</a>
+                    <a href='faq.html'>FAQ</a>
+                    <a href='contact.html'>Contact</a>
+                    <a href='/dashboard/vendor-login.html' class='renew-btn' style='padding:10px 16px'>Vendor Login</a>
+                    <a href='/dashboard/admin-login.html' class='admin-btn' style='padding:10px 16px'>Admin Login</a>
+                </div>
+                
+            </div>
+        </div>
+        
+        <section class='page-hero'>
+            <div class='container reveal'>
+                <h1 class='page-title'>Verify a Vendor</h1>
+                <p class='page-lead'>Enter a vendor ID or simulate a QR-based check. This page should feel like a public decision screen, not a form.</p>
+                <div class='panel search-strip'>
+                    <input id='vendor-code' class='input' value='SVV-10293' placeholder='Enter Vendor ID or Scan QR'>
+                    <button class='btn btn-green' onclick='runVerifyDemo()'>Check Status</button>
+                </div>
+                
+                <div class='pill-nav' style='margin-top:14px'>
+                    <span class='kbd'>SVV-10293 = verified</span>
+                    <span class='kbd'>SVV-44444 = suspended</span>
+                    <span class='kbd'>Any other ID = not found</span>
+                </div>
+            </div>
+        </section>
+        
+        <section class='section' style='padding:50px 0'>
+            <div class='container'>
+                <div class='card result-card reveal' id='verify-result'></div>
+            </div>
+        </section>
+        
+        <footer class="main-footer">
+            <div class="container">
+                <div class="footer-container">
+                    <div class="footer-column brand-info">
+                    <h2 class="footer-logo">SVSC</h2>
+                    <p>Empowering the street economy through official verification, trust, and standardized infrastructure. Built for speed and authority.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="verify.html">Verify Vendor</a></li>
+                        <li><a href="apply.html">Apply Now</a></li>
+                        <li><a href="#">Resources</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Standards Council HQ, Digital Way</p>
+                    <p><i class="fas fa-envelope"></i> support@svsc.gov</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 000-1234</p>
+                </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Street Vendor Verified · Issued by Street Vendor Standards Council. All rights reserved.</p>
+            </div>
+        </footer>
+        
+        <script src='script.js'></script>
+    </body>
+    </html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Vendor Dashboard</title>
+    <link rel='preconnect' href='https://fonts.googleapis.com'>
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel='stylesheet' href='/styles.css'>
+</head>
+
+<body>
+    <div class='nav'>
+        <div class='container nav-inner'>
+            <a class='brand'>
+                <div class='logo'>✓</div>
+                <div>
+                    <div class='brand-title'>Street Vendor Verified</div>
+                    <div class='brand-sub page-title2'>Vendor Dashboard</div>
+                </div>
+            </a>
+
+            <div class="nav-dashboard">
+                <a href="/index.html" class="btn">Home</a>
+                
+                <a href="/dashboard/vendor-login.html" class="btn-signout">Logout</a>
+
+                <div class="profile-container" id="profileTrigger">
+                    <div class="profile-circle">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
+                    </div>
+
+                    <div class="profile-dropdown">
+                        <div class="dropdown-content">
+                            <p class="vendor-name">James Bolaji</p>
+                            <p class="vendor-email">james.b@tealbinternational.com</p>
+                            <div class="status-badge verified">
+                                <i class="fas fa-check-circle"></i> Verified Vendor
+                            </div>
+                            <hr>
+                            <a href="/dashboard/account-settings.html">Account Settings</a>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="/dashboard/account-settings.html" class="btn-account"><i class="fa-solid fa-user-gear"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <section class='page-hero'>
+
+        <div class='container reveal'>
+            <h1 class='page-title'> Account Settings </h1>
+            <hr>
+            <div class='breadcrumb btn-secondary'>
+                <a href='vendor-dashboard.html' class="dashboard">Vendor Dashboard</a>
+
+                <i class="fa-sharp fa-solid fa-angle-right success-green"></i>
+
+                <p class="active"> Profile </p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="dashboard-container">
+                <aside class="sidebar">
+                    <div class="card sidebar-card">
+
+                        <div class="profile-header">
+                            <div class="photo-wrapper">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User Portrait"
+                                    id="profile-photo" class="profile-photo">
+                            </div>
+                            <div class="basic-info">
+                                <h2>James K.</h2>
+                                <p class="role">Tealb International</p>
+                            </div>
+                        </div>
+
+                        <div class="profile-list">
+                            <div class="profile-list-item">
+                                <i class="fas fa-check-circle success-green"></i> <span>Verification: <span
+                                        class='badge green'>Verified</span></span>
+                            </div>
+                            <div class="profile-list-item">
+                                <i class="fas fa-check-circle success-green"></i> <span>Membership: <span
+                                        class='badge green'>Active</span></span>
+                            </div>
+                            <div class="profile-list-item">
+                                <i class="fas fa-check-circle success-green"></i> <span>Sales Status: Live</span>
+                            </div>
+                            <div class="profile-list-item">
+                                <i class="fas fa-check-circle success-green"></i> <span>Reviews Status: Solid</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-green-full">Account History <i class="fas fa-history"></i></button>
+                    </div>
+                </aside>
+
+                <main class="main-content">
+                    <div class="card form-card">
+                        <h3>Update Vendor Profile</h3>
+                        <p class="form-instructions">Complete the form below to update your public-facing vendor
+                            information.</p>
+
+                        <form id="profileUpdateForm">
+                            <div class="form-group">
+                                <label for="vendorName">Company/Vendor Name</label>
+                                <input type="text" id="vendorName" name="vendorName"
+                                    placeholder="e.g., Tealb International">
+                            </div>
+
+                            <div class="form-row two-col">
+                                <div class="form-group">
+                                    <label for="posterAddress">Poster Address (for billing)</label>
+                                    <input type="text" id="posterAddress" name="posterAddress">
+                                </div>
+                                <div class="form-group">
+                                    <label for="mainAddress">Main Business Address</label>
+                                    <input type="text" id="mainAddress" name="mainAddress">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contactNumber">Contact Number</label>
+                                <input type="tel" id="contactNumber" name="contactNumber" placeholder="+xxx xxxx xxxx">
+                            </div>
+
+                            <div class="form-row two-col">
+                                <div class="form-group">
+                                    <label for="businessSector">Business Sector</label>
+                                    <select id="businessSector" name="businessSector">
+                                        <option value="">Select Sector</option>
+                                        <option value="agro">Agro-Processing</option>
+                                        <option value="retail">General Retail</option>
+                                        <option value="logistics">Logistics</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="businessRegion">Business Region</label>
+                                    <input type="text" id="businessRegion" name="businessRegion"
+                                        placeholder="e.g., Kumasi, Ghana">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="taxId">Tax ID/Registration Number</label>
+                                <input type="text" id="taxId" name="taxId">
+                            </div>
+
+                            <button type="submit" class="btn btn-green">Save Update <i class="fas fa-save"></i></button>
+                        </form>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </section>
+
+    <div class='container footer'>Street Vendor Verified · Issued by Street Vendor Standards Council</div>
+    <script src='script.js'></script>
+</body>
+
+</html>
