@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <div class='nav'>
+    <nav class='nav'>
         <div class='container nav-inner'>
             <a href='index.html' class='brand'>
                 <div class='logo'>✓</div>
@@ -23,19 +23,24 @@
                 </div>
             </a>
 
-            <div class='nav-links'>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+
+            <div class='nav-links' id="nav-links">
                 <a href='verify.html'>Verify</a>
                 <a href='apply.html'>Apply</a>
                 <a href='organisations.html' class="active">Organisations</a>
                 <a href='report.html'>Report</a>
                 <a href='faq.html'>FAQ</a>
                 <a href='contact.html'>Contact</a>
-                <a href='/dashboard/vendor-login.html' class='renew-btn' style='padding:10px 16px'>Vendor Login</a>
-                <a href='/dashboard/admin-login.html' class='admin-btn' style='padding:10px 16px'>Admin Login</a>
+                <a href='/dashboard/vendor-login.html' class='renew-btn'>Vendor Login</a>
+                <a href='/dashboard/admin-login.html' class='admin-btn'>Admin Login</a>
             </div>
-
         </div>
-    </div>
+    </nav>
 
     <section class='page-hero'>
         <div class='container reveal'>

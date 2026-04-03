@@ -204,7 +204,6 @@ hr{
     display: grid;
     gap: 30px;
     grid-template-columns: 30% 70%;
-    min-height: 100vh;
 }
 
 /* Common Card Styling */
