@@ -1,3 +1,23 @@
+// NAV-MENU
+document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.getElementById('mobile-menu');
+    const navLinks = document.getElementById('nav-links');
+
+    menuToggle.addEventListener('click', () => {
+        // Toggle the 'active' class on both the links container and the button
+        navLinks.classList.toggle('active');
+        menuToggle.classList.toggle('active');
+    });
+
+    // Close menu when a link is clicked
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            menuToggle.classList.remove('active');
+        });
+    });
+});
+
 function setVerifyState(type){const card=document.getElementById('verify-result');if(!card)return;let top='green',title='OFFICIALLY VERIFIED',badgeClass='green',badgeText='Verified',org='Inside Success',expiry='15 June 2026',message='This vendor is currently verified and authorised within the system.';if(type==='suspended'){top='red';title='SUSPENDED';badgeClass='red';badgeText='Suspended';org='Verification Restricted';message='This vendor is not currently authorised.';}if(type==='notfound'){top='gray';title='NO RECORD FOUND';badgeClass='amber';badgeText='Not Found';org='—';expiry='—';message='We could not locate this vendor ID.';}card.innerHTML=`<div class='result-banner ${top}'>${title}</div><div class='result-body'><div class='profile-grid'><div class='avatar'></div><div><div class='card-row'><h2 style='font-size:34px'>James K.</h2><span class='badge ${badgeClass}'>${badgeText}</span></div><p class='muted' style='margin-top:6px'>${org}</p><div class='meta-grid'><div class='field'><label>Vendor ID</label>SVV-10293</div><div class='field'><label>Valid Until</label>${expiry}</div></div><p style='font-weight:800;margin-top:18px'>${message}</p><div class='card-row' style='justify-content:space-between;margin-top:18px'><span class='muted'>Issued by Street Vendor Standards Council</span><a class='btn btn-secondary' href='report.html'>Report this vendor</a></div></div></div></div>`;}function runVerifyDemo(){const value=(document.getElementById('vendor-code')?.value||'').trim().toUpperCase();if(value==='SVV-44444')setVerifyState('suspended');else if(value&&value!=='SVV-10293')setVerifyState('notfound');else setVerifyState('verified');}document.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('verify-result'))setVerifyState('verified');});
 
 // Function to pull a random portrait to simulate dynamic data

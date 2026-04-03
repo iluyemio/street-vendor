@@ -126,9 +126,71 @@ img{width:48px;height:48px;}
     .hero-grid,.grid-4,.grid-3,.grid-2,.profile-grid,.meta-grid{grid-template-columns:1fr}h1{font-size:46px}
 
 .page-title{font-size:18px}
-.lead{font-size:18px}
-.nav-links{display:none}
-.mobile-only{display:none}}
+.lead{font-size:18px}}
+
+/* Base Navbar Styles */
+
+/* Mobile Toggle Styling */
+.menu-toggle {
+    display: none; /* Hidden on Desktop */
+    flex-direction: column;
+    cursor: pointer;
+    gap: 5px;
+}
+
+.bar {
+    width: 25px;
+    height: 3px;
+    background-color: #1c314a; /* Navy color from your UI */
+    transition: 0.3s ease;
+}
+
+/* --- Mobile Breakpoint --- */
+@media (max-width: 992px) {
+    .menu-toggle {
+        display: flex; /* Show on Mobile */
+    }
+
+    .nav-links {
+        display: none; /* Hidden by default on mobile */
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #f4fff9;
+        padding: 30px;
+        border-bottom: 2px solid var(--green-checked, #2a7a4c);
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+
+    /* Class to show the menu via JS */
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-links a {
+        width: 100%;
+    }
+
+    .nav-links a:last-child {
+        border-bottom: none;
+    }
+    
+    /* Hamburger Animation to 'X' */
+    .menu-toggle.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .menu-toggle.active .bar:nth-child(2) { opacity: 0; }
+    .menu-toggle.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+}
+
+/* Desktop Defaults (fallback if not in your main CSS) */
+@media (min-width: 993px) {
+    .nav-links {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+    }
+}
 
 hr{
     border: none;
