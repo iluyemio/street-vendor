@@ -30,8 +30,6 @@ const fetchRandomPhoto = () => {
     // Safety check to ensure the element exists
     if (photoImg) {
         photoImg.src = photoUrl;
-    } else {
-        console.error('Profile photo element not found.');
     }
 };
 
@@ -50,7 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const listElement = document.getElementById('applicationList');
-    const filterTabs = document.getElementById('statusFilters').children;
+    const filterTabs = document.getElementById('statusFilters');
+
+    if (!listElement || !filterTabs) return;
 
     // --- Function to generate and render the application list based on filter ---
     const renderApplications = (filteredStatus = 'all') => {
@@ -105,10 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Handle Filter Tab Clicks ---
-    Array.from(filterTabs).forEach(tab => {
+    Array.from(filterTabs.children).forEach(tab => {
         tab.addEventListener('click', function() {
             // Update active state
-            Array.from(filterTabs).forEach(t => t.classList.remove('active'));
+            Array.from(filterTabs.children).forEach(t => t.classList.remove('active'));
             this.classList.add('active');
 
             // Render list based on selected status
@@ -123,6 +123,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // VENDOR DATABASE
 document.addEventListener('DOMContentLoaded', () => {
+    const tableBody = document.getElementById('vendorBody');
+    if (!tableBody) return;
+
     const vendorData = [
         { name: 'James Kallean', id: 'Ven-301', status: 'verified', action: 'View Vendor'},
         { name: 'Laura L.', id: 'Ven-332', status: 'verified', action: 'View Vendor'},
@@ -133,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'Ravi R.', id: 'Ven-299', status: 'denied', action: 'View Vendor'},
     ];
 
-    const tableBody = document.getElementById('vendorBody');
     const modal = document.getElementById('modalOverlay');
     const closeBtn = document.getElementById('closeModal');
 
@@ -195,68 +197,74 @@ const statusData = [
 
 const svg = document.getElementById('pie-chart');
 const legend = document.getElementById('legend');
-let cumulativePercent = 0;
 
-function getCoordinates(percent, radius = 45) {
-    const x = 50 + radius * Math.cos(2 * Math.PI * percent - Math.PI / 2);
-    const y = 50 + radius * Math.sin(2 * Math.PI * percent - Math.PI / 2);
-    return [x, y];
-}
+// Only render chart if elements exist
+if (svg && legend) {
+    let cumulativePercent = 0;
 
-statusData.forEach(data => {
-    // Calculate Slice Path
-    const startPercent = cumulativePercent;
-    const endPercent = cumulativePercent + (data.percentage / 100);
-    const [startX, startY] = getCoordinates(startPercent);
-    const [endX, endY] = getCoordinates(endPercent);
-    const largeArcFlag = data.percentage > 50 ? 1 : 0;
-
-    const pathData = `M 50 50 L ${startX} ${startY} A 45 45 0 ${largeArcFlag} 1 ${endX} ${endY} Z`;
-    
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', pathData);
-    path.setAttribute('fill', data.color);
-    svg.appendChild(path);
-
-    // Calculate Middle of Slice for Label
-    const midPercent = startPercent + (data.percentage / 100) / 2;
-    
-    if (data.callout) {
-        // Create External Callout for 'Absent'
-        const [labelX, labelY] = getCoordinates(midPercent, 60);
-    
-
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', labelX);
-        text.setAttribute('y', labelY);
-        text.setAttribute('class', 'callout-text');
-        text.innerHTML = `<tspan x="${labelX}" dy="-1">${data.label}:</tspan><tspan x="${labelX}" dy="4.5">(${data.percentage}%)</tspan>`;
-        svg.appendChild(text);
-    } else {
-        // Create Internal Label
-        const [labelX, labelY] = getCoordinates(midPercent, 25);
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', labelX);
-        text.setAttribute('y', labelY);
-        text.setAttribute('class', 'chart-label');
-        text.innerHTML = `<tspan x="${labelX}" dy="-1">${data.label}:</tspan><tspan x="${labelX}" dy="4.5">(${data.percentage}%)</tspan>`;
-        svg.appendChild(text);
+    function getCoordinates(percent, radius = 45) {
+        const x = 50 + radius * Math.cos(2 * Math.PI * percent - Math.PI / 2);
+        const y = 50 + radius * Math.sin(2 * Math.PI * percent - Math.PI / 2);
+        return [x, y];
     }
 
-    cumulativePercent = endPercent;
+    statusData.forEach(data => {
+        // Calculate Slice Path
+        const startPercent = cumulativePercent;
+        const endPercent = cumulativePercent + (data.percentage / 100);
+        const [startX, startY] = getCoordinates(startPercent);
+        const [endX, endY] = getCoordinates(endPercent);
+        const largeArcFlag = data.percentage > 50 ? 1 : 0;
 
-    // Add to Legend
-    const item = document.createElement('div');
-    item.className = 'legend-item';
-    item.innerHTML = `<div class="color-box" style="background-color: ${data.color}"></div><span>${data.label}</span>`;
-    legend.appendChild(item);
-});
+        const pathData = `M 50 50 L ${startX} ${startY} A 45 45 0 ${largeArcFlag} 1 ${endX} ${endY} Z`;
+        
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', pathData);
+        path.setAttribute('fill', data.color);
+        svg.appendChild(path);
+
+        // Calculate Middle of Slice for Label
+        const midPercent = startPercent + (data.percentage / 100) / 2;
+        
+        if (data.callout) {
+            // Create External Callout for 'Absent'
+            const [labelX, labelY] = getCoordinates(midPercent, 60);
+        
+
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', labelX);
+            text.setAttribute('y', labelY);
+            text.setAttribute('class', 'callout-text');
+            text.innerHTML = `<tspan x="${labelX}" dy="-1">${data.label}:</tspan><tspan x="${labelX}" dy="4.5">(${data.percentage}%)</tspan>`;
+            svg.appendChild(text);
+        } else {
+            // Create Internal Label
+            const [labelX, labelY] = getCoordinates(midPercent, 25);
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', labelX);
+            text.setAttribute('y', labelY);
+            text.setAttribute('class', 'chart-label');
+            text.innerHTML = `<tspan x="${labelX}" dy="-1">${data.label}:</tspan><tspan x="${labelX}" dy="4.5">(${data.percentage}%)</tspan>`;
+            svg.appendChild(text);
+        }
+
+        cumulativePercent = endPercent;
+
+        // Add to Legend
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.innerHTML = `<div class="color-box" style="background-color: ${data.color}"></div><span>${data.label}</span>`;
+        legend.appendChild(item);
+    });
+}
 
 
 // LOGIN Page
 document.addEventListener('DOMContentLoaded', () => {
     const togglePassword = document.querySelector('#togglePassword');
     const password = document.querySelector('#password');
+
+    if (!togglePassword || !password) return;
 
     togglePassword.addEventListener('click', function () {
         // Toggle the type attribute
@@ -275,10 +283,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const addVendorModal = document.getElementById('addVendorModal');
     const profileModal = document.getElementById('modalOverlay');
     
+    if (!addVendorModal || !profileModal) return;
+
     // Trigger Buttons
     const btnAddNewVendor = document.querySelector('.btn-sidebar');
     const closeAddBtn = document.getElementById('closeAddModal');
     const cancelAddBtn = document.getElementById('cancelAdd');
+    const newVendorForm = document.getElementById('newVendorForm');
+
+    if (!btnAddNewVendor || !closeAddBtn || !cancelAddBtn || !newVendorForm) return;
 
     // Open Add Vendor Modal
     btnAddNewVendor.addEventListener('click', () => {
@@ -296,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cancelAddBtn.onclick = closeAddAction;
 
     // Handle Form Submission
-    document.getElementById('newVendorForm').addEventListener('submit', (e) => {
+    newVendorForm.addEventListener('submit', (e) => {
         e.preventDefault();
         alert('Vendor added successfully to the database!');
         closeAddAction();
@@ -315,24 +328,63 @@ document.addEventListener('DOMContentLoaded', () => {
 // APPLY FORM
 document.addEventListener('DOMContentLoaded', () => {
     const applyForm = document.getElementById('applyForm');
-    const submitBtn = document.querySelector('.btn-submit');
+    console.log('Apply form found:', applyForm ? 'YES' : 'NO');
+    if (!applyForm) return;
 
-    applyForm.addEventListener('submit', (e) => {
+    const submitBtn = applyForm.querySelector('.btn-submit');
+    const statusMessage = document.getElementById('applyStatus');
+    const loader = document.getElementById('applyLoader');
+
+    console.log('Apply form elements loaded. Submit button:', submitBtn ? 'YES' : 'NO');
+
+    applyForm.addEventListener('submit', async (e) => {
+        console.log('Form submit event triggered');
         e.preventDefault();
-        
-        // Simulating the dynamic interaction
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-        submitBtn.style.opacity = '0.7';
-        submitBtn.disabled = true;
 
-        setTimeout(() => {
-            alert('Application submitted successfully to the Street Vendor Standards Council!');
-            // Reset form
+        if (!submitBtn) return;
+
+        statusMessage.textContent = '';
+        statusMessage.className = 'status-message';
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        loader?.classList.remove('hidden');
+
+        const formData = new FormData(applyForm);
+        const payload = {
+            firstName: formData.get('firstName'),
+            lastName: formData.get('lastName'),
+            email: formData.get('email'),
+            organisationName: formData.get('organisationName'),
+        };
+
+        console.log('Sending payload:', payload);
+
+        try {
+            const response = await fetch('http://localhost:3000/api/apply', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const data = await response.json();
+
+            console.log('Response:', data, 'Status:', response.status);
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Unable to submit application.');
+            }
+
+            statusMessage.textContent = 'Application submitted successfully. Confirmation email was sent.';
+            statusMessage.classList.add('success');
             applyForm.reset();
-            submitBtn.innerHTML = 'Apply Now!';
-            submitBtn.style.opacity = '1';
+        } catch (error) {
+            console.error('Error:', error.message);
+            statusMessage.textContent = `Error: ${error.message}`;
+            statusMessage.classList.add('error');
+        } finally {
             submitBtn.disabled = false;
-        }, 1500);
+            submitBtn.innerHTML = 'Apply Now!';
+            loader?.classList.add('hidden');
+        }
     });
 });
 

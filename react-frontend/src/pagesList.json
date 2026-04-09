@@ -1,0 +1,62 @@
+[
+  {
+    "componentName": "AccountSettings",
+    "route": "/account-settings"
+  },
+  {
+    "componentName": "AdminAccountSettings",
+    "route": "/admin-account-settings"
+  },
+  {
+    "componentName": "AdminDashboard",
+    "route": "/admin-dashboard"
+  },
+  {
+    "componentName": "AdminLogin",
+    "route": "/admin-login"
+  },
+  {
+    "componentName": "Apply",
+    "route": "/apply"
+  },
+  {
+    "componentName": "Contact",
+    "route": "/contact"
+  },
+  {
+    "componentName": "Faq",
+    "route": "/faq"
+  },
+  {
+    "componentName": "Index",
+    "route": "/"
+  },
+  {
+    "componentName": "Organisations",
+    "route": "/organisations"
+  },
+  {
+    "componentName": "Report",
+    "route": "/report"
+  },
+  {
+    "componentName": "VendorDashboard",
+    "route": "/vendor-dashboard"
+  },
+  {
+    "componentName": "VendorDatabase",
+    "route": "/vendor-database"
+  },
+  {
+    "componentName": "VendorLogin",
+    "route": "/vendor-login"
+  },
+  {
+    "componentName": "VendorProfile",
+    "route": "/vendor-profile"
+  },
+  {
+    "componentName": "Verify",
+    "route": "/verify"
+  }
+]

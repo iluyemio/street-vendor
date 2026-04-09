@@ -1,0 +1,187 @@
+
+        /* Navigation */
+.top-nav {
+    background: white;
+    padding: 10px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-logo { height: 45px; }
+
+.nav-search {
+    background: #f1f3f4;
+    padding: 8px 20px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    width: 350px;
+}
+
+.nav-search input {
+    border: none;
+    background: transparent;
+    margin-left: 10px;
+    width: 100%;
+    outline: none;
+}
+
+/* Layout Grid */
+.database-container {
+    display: grid;
+    grid-template-columns: 68% 30%;
+    gap: 2%;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    padding: 25px;
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+/* Table Styling */
+.card-header-database {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.card-header-database .head-btn{
+    display: flex;
+    gap: 10px;
+}
+
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 15px; color: #636e72; font-size: 0.85rem; text-transform: uppercase; border-bottom: 2px solid #f1f3f4; }
+td { padding: 15px; border-bottom: 1px solid #f1f3f4; vertical-align: middle; }
+
+.vendor-cell { display: flex; align-items: center; gap: 12px; font-weight: 600; }
+.vendor-img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+
+/* Status Labels */
+.status-pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.status-verified { background: #e3fcef; color: green; }
+.status-pending { background: #fff6e7; color: #f59e0b; }
+.status-denied { background: #ffebee; color: #dc2626; }
+
+/* Action Buttons */
+.btn-action {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: none;
+    background-color: #64748b;
+    color: white;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-sidebar {
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: none;
+    background-color: green;
+    color: white;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-export {
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: none;
+    border: 1px solid green;
+    background: transparent;
+    color: green;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-green { background: #1f5e39; }
+.btn-red { background: #c0392b; }
+
+/* Sidebar Charts */
+.insight-card { margin-bottom: 20px; }
+
+
+.chart-main-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+.svg-wrapper {
+    width: 320px;
+    height: 320px;
+}
+
+/* SVG Text Styling */
+.chart-label {
+    fill: white;
+    font-size: 3.5px;
+    font-weight: bold;
+    pointer-events: none;
+    text-anchor: middle;
+}
+
+/* Specific styling for the 'Absent' callout box */
+.callout-box {
+    fill: white;
+    stroke: #ddd;
+    stroke-width: 0.5;
+}
+
+.callout-text {
+    fill: black;
+    font-size: 3.5px;
+    font-weight: bold;
+}
+
+.legend-container {
+    display: flex;
+    gap: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+}
+
+.color-box {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+}
+
+/* Responsiveness */
+@media (max-width: 1100px) {
+    .database-container { grid-template-columns: 100%; }
+    .insight-sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+}
+
+@media (max-width: 768px) {
+    .insight-sidebar { grid-template-columns: 100%; }
+    .table-responsive { overflow-x: auto; }
+}

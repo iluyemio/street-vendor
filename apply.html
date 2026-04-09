@@ -70,11 +70,24 @@
             </div>
             <div class='card feature-card reveal'>
                 <h2>Application form</h2>
-                <div class='grid-2' style='margin-top:18px'><input class='input' placeholder='First Name'><input
-                        class='input' placeholder='Last Name'><input class='input' style='grid-column:1/-1'
-                        placeholder='Email Address'><input class='input' style='grid-column:1/-1'
-                        placeholder='Organisation Name'></div>
-                <div class='hero-actions'><a class='btn btn-primary' href='#'>Apply for Verification</a></div>
+                <form id='applyForm' method='POST' action='#' style='margin-top:18px' onsubmit='return false;'>
+                    <div class='grid-2' style='gap:18px'>
+                        <input class='input' type='text' name='firstName' placeholder='First Name' required>
+                        <input class='input' type='text' name='lastName' placeholder='Last Name' required>
+                    </div>
+                    <div class='grid-2' style='margin-top:18px; gap:18px'>
+                        <input class='input' type='email' name='email' placeholder='Email Address' style='grid-column:1/-1' required>
+                        <input class='input' type='text' name='organisationName' placeholder='Organisation Name' style='grid-column:1/-1' required>
+                    </div>
+                    <div class='form-action'>
+                        <button type='submit' class='btn-submit'>Apply Now!</button>
+                    </div>
+                    <div id='applyLoader' class='preloader hidden'>
+                        <div class='spinner'></div>
+                        <span>Sending application...</span>
+                    </div>
+                    <div id='applyStatus' class='status-message' aria-live='polite'></div>
+                </form>
             </div>
         </div>
     </section>
