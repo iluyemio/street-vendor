@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import AccountSettings from './pages/AccountSettings';
 import AdminAccountSettings from './pages/AdminAccountSettings';
 import AdminDashboard from './pages/AdminDashboard';
@@ -32,9 +34,19 @@ function App() {
         <Route path="/vendor-dashboard" element={<VendorDashboard />} />
         <Route path="/vendor-database" element={<VendorDatabase />} />
         <Route path="/vendor-login" element={<VendorLogin />} />
-        <Route path="/vendor-profile" element={<VendorProfile />} />
+        <Route path="/vendor-profile/:vendorId?" element={<VendorProfile />} />
         <Route path="/verify" element={<Verify />} />
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        pauseOnFocusLoss
+      />
     </Router>
   );
 }

@@ -1,25 +1,98 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles.css';
 
 const AdminAccountSettings = () => {
+    const [user, setUser] = useState<any>(null);
+    const [adminName, setAdminName] = useState('');
+    const [emailAddress, setEmailAddress] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [message, setMessage] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     useEffect(() => {
         const mobileMenu = document.getElementById('mobile-menu');
         const navLinks = document.getElementById('nav-links');
-        
+        const cleanup: Array<() => void> = [];
+
         if (mobileMenu && navLinks) {
             const toggleMenu = () => {
                 navLinks.classList.toggle('active');
                 mobileMenu.classList.toggle('active');
             };
-            const handleClick = (e: MouseEvent) => e.preventDefault();
             mobileMenu.addEventListener('click', toggleMenu);
-            return () => {
-                mobileMenu.removeEventListener('click', toggleMenu);
-            };
+            cleanup.push(() => mobileMenu.removeEventListener('click', toggleMenu));
         }
-    }, [])
-    
+
+        const storedUser = localStorage.getItem('user');
+        const token = localStorage.getItem('token');
+        if (!storedUser || !token) {
+            window.location.href = '/admin-login';
+            return () => cleanup.forEach((fn) => fn());
+        }
+
+        const currentUser = JSON.parse(storedUser);
+        if (currentUser.user_type !== 'admin') {
+            window.location.href = '/admin-login';
+            return () => cleanup.forEach((fn) => fn());
+        }
+
+        setUser(currentUser);
+        setAdminName(`${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim());
+        setEmailAddress(currentUser.email || '');
+        setPhoneNumber(currentUser.contactNumber || '');
+
+        return () => cleanup.forEach((fn) => fn());
+    }, []);
+
+    const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/admin-login';
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setMessage('');
+        setIsSubmitting(true);
+
+        if (!user?.id) {
+            setMessage('Unable to update profile. Please sign in again.');
+            setIsSubmitting(false);
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/api/user/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: user.id,
+                    firstName: adminName.split(' ')[0] || '',
+                    lastName: adminName.split(' ').slice(1).join(' ') || '',
+                    email: emailAddress,
+                    contactNumber: phoneNumber,
+                }),
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                setUser(result);
+                localStorage.setItem('user', JSON.stringify(result));
+                setMessage('Profile updated successfully.');
+            } else {
+                setMessage(result?.message || 'Failed to update profile.');
+            }
+        } catch (error) {
+            setMessage('Network error. Please try again later.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <>
             
@@ -36,17 +109,17 @@ const AdminAccountSettings = () => {
             <div className="nav-dashboard">
                 <a href="/" className="btn">Home</a>
                 
-                <a href="/admin-login" className="btn-signout">Logout</a>
+                <a href="/admin-login" className="btn-signout" onClick={handleLogout}>Logout</a>
 
                 <div className="profile-container" id="profileTrigger">
                     <div className="profile-circle">
-                        <img src="https://randomuser.me/api/portraits/men/31.jpg" alt="Profile" />
+                        <img src={user?.profile_picture || 'https://randomuser.me/api/portraits/men/31.jpg'} alt="Profile" />
                     </div>
 
                     <div className="profile-dropdown">
                         <div className="dropdown-content">
-                            <p className="vendor-name">Daren Ola</p>
-                            <p className="vendor-email">daren.o@streetvendor.com</p>
+                            <p className="vendor-name">{user ? `${user.firstName} ${user.lastName}` : 'Administrator'}</p>
+                            <p className="vendor-email">{user?.email || 'admin@example.com'}</p>
                             <div className="status-badge verified">
                                 <i className="fas fa-check-circle"></i> Administrator
                             </div>
@@ -56,7 +129,7 @@ const AdminAccountSettings = () => {
                     </div>
                 </div>
 
-                <a href="/account-settings" className="btn-account"><i className="fa-solid fa-user-gear"></i></a>
+                <a href="/admin-account-settings" className="btn-account" title="Account Settings"><i className="fa-solid fa-user-gear"></i></a>
             </div>
         </div>
     </div>
@@ -84,11 +157,14 @@ const AdminAccountSettings = () => {
 
                         <div className="profile-header">
                             <div className="photo-wrapper">
-                                <img src="https://randomuser.me/api/portraits/men/31.jpg" alt="User Portrait"
-                                     className="profile-photo" />
+                                <img
+                                    src={user?.profile_picture || 'https://randomuser.me/api/portraits/men/31.jpg'}
+                                    alt="User Portrait"
+                                    className="profile-photo"
+                                />
                             </div>
                             <div className="basic-info">
-                                <h2>Daren Ola</h2>
+                                <h2>{user ? `${user.firstName} ${user.lastName}` : 'Administrator'}</h2>
                                 <p className="role">Administrator</p>
                             </div>
                         </div>
@@ -101,25 +177,47 @@ const AdminAccountSettings = () => {
                         <p className="form-instructions">Complete the form below to update your public-facing administrator
                             information.</p>
 
-                        <form id="profileUpdateForm">
+                        <form id="profileUpdateForm" onSubmit={handleSubmit}>
                             <div className="form-group">
                                 <label htmlFor="adminName">Administrator Name</label>
-                                <input type="text" id="adminName" name="adminName"
-                                    placeholder="e.g., Daren Ola" />
+                                <input
+                                    type="text"
+                                    id="adminName"
+                                    name="adminName"
+                                    value={adminName}
+                                    onChange={(e) => setAdminName(e.target.value)}
+                                    placeholder="e.g., Daren Ola"
+                                />
                             </div>
 
                             <div className="form-row two-col">
                                 <div className="form-group">
                                     <label htmlFor="emailAddress">Email Address</label>
-                                    <input type="email" id="emailAddress" name="emailAddress" />
+                                    <input
+                                        type="email"
+                                        id="emailAddress"
+                                        name="emailAddress"
+                                        value={emailAddress}
+                                        onChange={(e) => setEmailAddress(e.target.value)}
+                                    />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="phoneNumber">Phone Number</label>
-                                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="+xxx xxxx xxxx" />
+                                    <input
+                                        type="tel"
+                                        id="phoneNumber"
+                                        name="phoneNumber"
+                                        placeholder="+xxx xxxx xxxx"
+                                        value={phoneNumber}
+                                        onChange={(e) => setPhoneNumber(e.target.value)}
+                                    />
                                 </div>
                             </div>
 
-                            <button type="submit" className="btn btn-green">Save Update <i className="fas fa-save"></i></button>
+                            <button type="submit" className="btn btn-green" disabled={isSubmitting}>
+                                {isSubmitting ? 'Saving...' : 'Save Update'} <i className="fas fa-save"></i>
+                            </button>
+                            {message && <div className="status-message">{message}</div>}
                         </form>
                     </div>
                 </main>

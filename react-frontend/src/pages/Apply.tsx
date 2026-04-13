@@ -1,8 +1,12 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { notifySuccess, notifyError } from '../lib/notifications';
 import '../styles.css';
 
 const Apply = () => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [message, setMessage] = useState('');
+
     useEffect(() => {
         const mobileMenu = document.getElementById('mobile-menu');
         const navLinks = document.getElementById('nav-links');
@@ -12,13 +16,56 @@ const Apply = () => {
                 navLinks.classList.toggle('active');
                 mobileMenu.classList.toggle('active');
             };
-            const handleClick = (e: MouseEvent) => e.preventDefault();
             mobileMenu.addEventListener('click', toggleMenu);
             return () => {
                 mobileMenu.removeEventListener('click', toggleMenu);
             };
         }
-    }, [])
+    }, []);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setMessage('');
+
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        
+        const data = {
+            firstName: formData.get('firstName'),
+            lastName: formData.get('lastName'),
+            email: formData.get('email'),
+            organisationName: formData.get('organisationName')
+        };
+
+        try {
+            const response = await fetch('http://localhost:3000/api/apply', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                notifySuccess(result.message || 'Application submitted successfully!');
+                setMessage(result.message || 'Application submitted successfully! Check your email for login credentials.');
+                form.reset();
+            } else {
+                const errorMessage = result.error || 'Failed to submit application. Please try again.';
+                notifyError(errorMessage);
+                setMessage(errorMessage);
+            }
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Network error. Please try again later.';
+            notifyError(errorMessage);
+            setMessage(errorMessage);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
     
     return (
         <>
@@ -80,7 +127,7 @@ const Apply = () => {
             </div>
             <div className='card feature-card reveal'>
                 <h2>Application form</h2>
-                <form id='applyForm' method='POST' action='#' style={{"marginTop":"18px"}} onsubmit='return false;'>
+                <form id='applyForm' method='POST' action='#' style={{"marginTop":"18px"}} onSubmit={handleSubmit}>
                     <div className='grid-2' style={{"gap":"18px"}}>
                         <input className='input' type='text' name='firstName' placeholder='First Name' required />
                         <input className='input' type='text' name='lastName' placeholder='Last Name' required />
@@ -90,13 +137,17 @@ const Apply = () => {
                         <input className='input' type='text' name='organisationName' placeholder='Organisation Name' style={{"gridColumn":"1/-1"}} required />
                     </div>
                     <div className='form-action'>
-                        <button type='submit' className='btn-submit'>Apply Now!</button>
+                        <button type='submit' className='btn-submit' disabled={isSubmitting}>
+                            {isSubmitting ? 'Submitting...' : 'Apply Now!'}
+                        </button>
                     </div>
-                    <div id='applyLoader' className='preloader hidden'>
+                    <div id='applyLoader' className={`preloader ${isSubmitting ? '' : 'hidden'}`}>
                         <div className='spinner'></div>
                         <span>Sending application...</span>
                     </div>
-                    <div id='applyStatus' className='status-message' aria-live='polite'></div>
+                    <div id='applyStatus' className='status-message' aria-live='polite'>
+                        {message}
+                    </div>
                 </form>
             </div>
         </div>

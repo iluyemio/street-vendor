@@ -193,22 +193,29 @@
 
             <div class="modal-header-hero">
                 <h1 class="page-title">Add New Vendor</h1>
-                <p class="page-lead">Register a new vendor into the Standards Council database</p>
+                <p class="page-lead">Select an applicant and register them as a vendor</p>
+            </div>
+
+            <div class="applicants-list" style="margin-bottom: 20px;">
+                <h3>Pending Applicants</h3>
+                <div style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px;" id="applicantsContainer">
+                    <!-- Applicants will be loaded here -->
+                </div>
             </div>
 
             <form id="newVendorForm" class="modal-body2">
                 <div class="form-grid">
                     <div class="input-group">
                         <label for="newVendorName">Full Name</label>
-                        <input type="text" id="newVendorName" placeholder="e.g. James Kallean" required>
+                        <input type="text" id="newVendorName" placeholder="Select an applicant first" required readonly>
                     </div>
                     <div class="input-group">
                         <label for="newVendorID">Vendor ID</label>
-                        <input type="text" id="newVendorID" placeholder="e.g. SVV-XXXXX" required>
+                        <input type="text" id="newVendorID" placeholder="Auto-generated" required readonly>
                     </div>
                     <div class="input-group">
                         <label for="newVendorOrg">Organization / Company</label>
-                        <input type="text" id="newVendorOrg" placeholder="e.g. Inside Success" required>
+                        <input type="text" id="newVendorOrg" placeholder="Auto-populated" required readonly>
                     </div>
                     <div class="input-group">
                         <label for="newVendorExpiry">Valid Until</label>
@@ -217,9 +224,11 @@
                 </div>
 
                 <div class="hero-actions full-width">
-                    <button type="submit" class="verify">Create Vendor Account</button>
+                    <button type="submit" class="verify" id="createBtn">Create Vendor Account</button>
                     <button type="button" class="cancel" id="cancelAdd">Cancel</button>
                 </div>
+                
+                <div id="message" style="margin-top: 10px;"></div>
             </form>
         </div>
     </div>

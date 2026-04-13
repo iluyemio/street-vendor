@@ -1,8 +1,13 @@
 
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import '../styles.css';
 
 const Verify = () => {
+    const [vendorCode, setVendorCode] = useState('SVV-10293');
+    const [vendor, setVendor] = useState<any>(null);
+    const [statusMessage, setStatusMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
     useEffect(() => {
         const mobileMenu = document.getElementById('mobile-menu');
         const navLinks = document.getElementById('nav-links');
@@ -12,13 +17,42 @@ const Verify = () => {
                 navLinks.classList.toggle('active');
                 mobileMenu.classList.toggle('active');
             };
-            const handleClick = (e: MouseEvent) => e.preventDefault();
             mobileMenu.addEventListener('click', toggleMenu);
             return () => {
                 mobileMenu.removeEventListener('click', toggleMenu);
             };
         }
     }, [])
+
+    const runVerify = async () => {
+        if (!vendorCode.trim()) {
+            setVendor(null);
+            setStatusMessage('Please enter a vendor ID to verify.');
+            return;
+        }
+
+        setIsLoading(true);
+        setVendor(null);
+        setStatusMessage('');
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/vendor/${encodeURIComponent(vendorCode.trim())}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                setStatusMessage(errorData.message || 'Vendor not found');
+                return;
+            }
+
+            const data = await response.json();
+            setVendor(data);
+            setStatusMessage('');
+        } catch (error) {
+            console.error('Verification failed:', error);
+            setStatusMessage('Unable to verify vendor right now. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
     
     return (
         <>
@@ -55,10 +89,18 @@ const Verify = () => {
         <section className='page-hero'>
             <div className='container reveal'>
                 <h1 className='page-title'>Verify a Vendor</h1>
-                <p className='page-lead'>Enter a vendor ID or simulate a QR-based check. This page should feel like a public decision screen, not a form.</p>
+                <p className='page-lead'>Enter a vendor ID, scan a QR code, or search for an approved profile.</p>
                 <div className='panel search-strip'>
-                    <input id='vendor-code' className='input' value='SVV-10293' placeholder='Enter Vendor ID or Scan QR' />
-                    <button className='btn btn-green' onclick='runVerifyDemo()'>Check Status</button>
+                    <input
+                        id='vendor-code'
+                        className='input'
+                        value={vendorCode}
+                        onChange={(e) => setVendorCode(e.target.value)}
+                        placeholder='Enter Vendor ID or Scan QR'
+                    />
+                    <button className='btn btn-green' type='button' onClick={runVerify} disabled={isLoading}>
+                        {isLoading ? 'Checking...' : 'Check Status'}
+                    </button>
                 </div>
                 
                 <div className='pill-nav' style={{"marginTop":"14px"}}>
@@ -71,7 +113,45 @@ const Verify = () => {
         
         <section className='section' style={{"padding":"50px 0"}}>
             <div className='container'>
-                <div className='card result-card reveal' id='verify-result'></div>
+                <div className='card result-card reveal'>
+                    {statusMessage && <p className='muted' style={{ marginBottom: '16px' }}>{statusMessage}</p>}
+                    {vendor ? (
+                        <div>
+                            <div className='card-row' style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <div>
+                                    <h2 style={{ fontSize: '34px' }}>{vendor.firstName} {vendor.lastName}</h2>
+                                    <span className={`badge ${vendor.status?.toLowerCase() === 'verified' ? 'green' : vendor.status?.toLowerCase() === 'suspended' ? 'red' : 'amber'}`}>
+                                        {vendor.status || 'PENDING'}
+                                    </span>
+                                </div>
+                            </div>
+                            <p className='muted' style={{ marginTop: '6px' }}>{vendor.organization_name || 'Vendor'}</p>
+                            <div className='meta-grid' style={{ marginTop: '18px' }}>
+                                <div className='field'>
+                                    <label>Vendor ID</label>{vendor.vendor_id || 'N/A'}
+                                </div>
+                                <div className='field'>
+                                    <label>Valid Until</label>{vendor.expires_at ? new Date(vendor.expires_at).toLocaleDateString() : 'N/A'}
+                                </div>
+                                <div className='field full-width'>
+                                    <label>Issued By</label>Street Vendor Standards Council
+                                </div>
+                            </div>
+                            <p style={{ fontWeight: '800', marginTop: '18px' }}>
+                                {vendor.status === 'VERIFIED'
+                                    ? 'This vendor is currently verified and authorised within the system.'
+                                    : vendor.status === 'SUSPENDED'
+                                        ? 'This vendor is currently suspended and not authorised.'
+                                        : 'This vendor is not currently verified.'}
+                            </p>
+                            <div className='hero-actions'>
+                                <a className='btn btn-secondary' href='/report'>Report this vendor</a>
+                            </div>
+                        </div>
+                    ) : (
+                        !statusMessage && <p className='muted'>Enter a vendor ID and click Check Status to verify a registered vendor.</p>
+                    )}
+                </div>
             </div>
         </section>
         

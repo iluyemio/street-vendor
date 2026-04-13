@@ -388,4 +388,222 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// VENDOR DATABASE PAGE SPECIFIC
+document.addEventListener('DOMContentLoaded', () => {
+    if (!document.getElementById('applicantsContainer')) return; // Only run on vendor-database.html
+
+    let selectedApplicant = null;
+    const applicantsContainer = document.getElementById('applicantsContainer');
+    const newVendorForm = document.getElementById('newVendorForm');
+    const messageDiv = document.getElementById('message');
+    const createBtn = document.getElementById('createBtn');
+
+    // Fetch applicants
+    async function fetchApplicants() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            const response = await fetch('http://localhost:3000/api/admin/applicants', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            const applicants = await response.json();
+            renderApplicants(applicants);
+        } catch (error) {
+            console.error('Failed to fetch applicants:', error);
+        }
+    }
+
+    function renderApplicants(applicants) {
+        applicantsContainer.innerHTML = '';
+        applicants.forEach(applicant => {
+            const div = document.createElement('div');
+            div.style.padding = '10px';
+            div.style.borderBottom = '1px solid #eee';
+            div.style.cursor = 'pointer';
+            div.style.backgroundColor = selectedApplicant?.id === applicant.id ? '#f0f8ff' : 'white';
+            div.onclick = () => selectApplicant(applicant);
+
+            div.innerHTML = `
+                <strong>${applicant.firstName} ${applicant.lastName}</strong> - ${applicant.email}
+                <br />
+                <small>${applicant.organization_name}</small>
+            `;
+            applicantsContainer.appendChild(div);
+        });
+    }
+
+    function selectApplicant(applicant) {
+        selectedApplicant = applicant;
+        document.getElementById('newVendorName').value = `${applicant.firstName} ${applicant.lastName}`;
+        document.getElementById('newVendorOrg').value = applicant.organization_name;
+        const vendorId = `SVV-${Date.now().toString().slice(-5)}`;
+        document.getElementById('newVendorID').value = vendorId;
+        renderApplicants(JSON.parse(applicantsContainer.dataset.applicants || '[]'));
+    }
+
+    // Handle form submission
+    newVendorForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!selectedApplicant) {
+            messageDiv.textContent = 'Please select an applicant first.';
+            messageDiv.style.color = 'red';
+            return;
+        }
+
+        createBtn.disabled = true;
+        createBtn.textContent = 'Creating...';
+        messageDiv.textContent = '';
+
+        try {
+            const token = localStorage.getItem('token');
+            const expiryDate = document.getElementById('newVendorExpiry').value;
+
+            const vendorData = {
+                firstName: selectedApplicant.firstName,
+                lastName: selectedApplicant.lastName,
+                email: selectedApplicant.email,
+                password: 'tempPassword123',
+                organization_name: selectedApplicant.organization_name,
+                user_type: 'vendor',
+                vendor_id: document.getElementById('newVendorID').value,
+                expires_at: new Date(expiryDate),
+                status: 'VERIFIED'
+            };
+
+            const response = await fetch('http://localhost:3000/api/admin/create-vendor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(vendorData),
+            });
+
+            if (response.ok) {
+                messageDiv.textContent = 'Vendor created successfully!';
+                messageDiv.style.color = 'green';
+                selectedApplicant = null;
+                fetchApplicants();
+                newVendorForm.reset();
+            } else {
+                const error = await response.json();
+                messageDiv.textContent = `Error: ${error.message}`;
+                messageDiv.style.color = 'red';
+            }
+        } catch (error) {
+            console.error('Failed to create vendor:', error);
+            messageDiv.textContent = 'Failed to create vendor. Please try again.';
+            messageDiv.style.color = 'red';
+        } finally {
+            createBtn.disabled = false;
+            createBtn.textContent = 'Create Vendor Account';
+        }
+    });
+
+    fetchApplicants();
+});
+
+// ADMIN DASHBOARD PAGE SPECIFIC
+document.addEventListener('DOMContentLoaded', () => {
+    if (!document.getElementById('applicationList')) return; // Only run on admin-dashboard.html
+
+    // Fetch stats
+    async function fetchStats() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            const response = await fetch('http://localhost:3000/api/admin/stats', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            const stats = await response.json();
+            updateStats(stats);
+        } catch (error) {
+            console.error('Failed to fetch stats:', error);
+        }
+    }
+
+    function updateStats(stats) {
+        document.querySelector('.metric-value').textContent = stats.totalVendors;
+        document.querySelectorAll('.metric-value')[1].textContent = stats.verifiedVendors;
+        document.querySelectorAll('.metric-value')[2].textContent = stats.deniedVendors;
+        document.querySelectorAll('.metric-value')[3].textContent = stats.pendingApplications;
+        document.querySelectorAll('.metric-value')[4].textContent = stats.suspendedVendors;
+        document.querySelectorAll('.metric-value')[5].textContent = stats.expiringSoon;
+    }
+
+    // Fetch applicants
+    async function fetchApplicants() {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3000/api/admin/applicants', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            const applicants = await response.json();
+            renderApplicants(applicants);
+        } catch (error) {
+            console.error('Failed to fetch applicants:', error);
+        }
+    }
+
+    function renderApplicants(applicants) {
+        const listElement = document.getElementById('applicationList');
+        listElement.innerHTML = '';
+
+        applicants.forEach(applicant => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'application-item';
+
+            const avatarUrl = `https://i.pravatar.cc/100?u=${applicant.email}`;
+
+            itemElement.innerHTML = `
+                <div class="vendor-block">
+                    <img src="${avatarUrl}" alt="${applicant.firstName}" class="vendor-avatar">
+                    <div class="vendor-details">
+                        <h4>${applicant.firstName} ${applicant.lastName}</h4>
+                        <p class="type">${applicant.organization_name}</p>
+                    </div>
+                </div>
+                <div class="action-block">
+                    <button class="btn-dashboard-item status-pending">Pending</button>
+                </div>
+            `;
+            listElement.appendChild(itemElement);
+        });
+    }
+
+    fetchStats();
+    fetchApplicants();
+});
+
 

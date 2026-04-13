@@ -1,8 +1,20 @@
 
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles.css';
 
 const Index = () => {
+    const navigate = useNavigate();
+    const [searchCode, setSearchCode] = useState('');
+
+    const handleSearch = () => {
+        if (!searchCode.trim()) {
+            navigate('/verify');
+            return;
+        }
+        navigate(`/vendor-profile/${encodeURIComponent(searchCode.trim())}`);
+    };
+
     useEffect(() => {
         const mobileMenu = document.getElementById('mobile-menu');
         const navLinks = document.getElementById('nav-links');
@@ -12,7 +24,6 @@ const Index = () => {
                 navLinks.classList.toggle('active');
                 mobileMenu.classList.toggle('active');
             };
-            const handleClick = (e: MouseEvent) => e.preventDefault();
             mobileMenu.addEventListener('click', toggleMenu);
             return () => {
                 mobileMenu.removeEventListener('click', toggleMenu);
@@ -65,8 +76,15 @@ const Index = () => {
                 </div>
 
                 <div className='panel search-strip'>
-                    <input className='input' placeholder='Enter Vendor ID or Scan QR' />
-                    <a className='btn btn-green' href="/vendor-profile">Verify</a>
+                    <input
+                        className='input'
+                        placeholder='Enter Vendor ID or Scan QR'
+                        value={searchCode}
+                        onChange={(e) => setSearchCode(e.target.value)}
+                    />
+                    <button className='btn btn-green' type='button' onClick={handleSearch}>
+                        Verify
+                    </button>
                 </div>
                 <div className='pill-nav' style={{"marginTop":"14px"}}>
                     <span className='kbd'>Fast public checks</span>

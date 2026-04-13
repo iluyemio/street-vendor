@@ -732,6 +732,10 @@ hr{
     gap: 6px;
 }
 
+.status-verify.not-verified {
+    color: var(--red);
+}
+
 /* Star Ratings */
 .star-rating {
     display: flex;

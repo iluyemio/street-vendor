@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model User{
+    id Int @id @default(autoincrement())
+    firstName String
+    lastName  String
+    email     String @unique
+    password  String
+    profile_picture String?
+    organization_name String @unique
+    posterAddress String?
+    mainAddress String?
+    contactNumber String?
+    businessSector String?
+    businessRegion String?
+    taxId String?
+    status Status @default(PENDING)
+    user_type String
+    vendor_id String? @unique
+    expires_at DateTime?
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+
+    activityLogsAsActor ActivityLog[] @relation("actorLogs")
+    activityLogsAsTarget ActivityLog[] @relation("targetLogs")
+}
+
+model ActivityLog {
+    id Int @id @default(autoincrement())
+    actorId Int?
+    targetUserId Int?
+    action String
+    details String?
+    variant String? @default("blue")
+    created_at DateTime @default(now())
+
+    actor User? @relation("actorLogs", fields: [actorId], references: [id])
+    targetUser User? @relation("targetLogs", fields: [targetUserId], references: [id])
+}
+
+
+enum Status{
+    ACTIVE
+    INACTIVE
+    PENDING
+    REJECTED
+    APPROVED
+    VERIFIED
+    SUSPENDED
+}

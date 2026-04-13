@@ -1,9 +1,54 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles.css';
 
 const VendorDashboard = () => {
+    const [user, setUser] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const isVerified = user?.status === 'ACTIVE' || user?.status === 'VERIFIED';
+
+    const formatDate = (value: string | null | undefined) => {
+        if (!value) return 'N/A';
+        return new Date(value).toLocaleDateString();
+    };
+
+    const fetchUserProfile = async (id: number) => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/user/profile/${id}`);
+            if (response.ok) {
+                const freshUser = await response.json();
+                setUser(freshUser);
+                localStorage.setItem('user', JSON.stringify(freshUser));
+            } else {
+                console.error('Failed to refresh user profile');
+            }
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        const userData = localStorage.getItem('user');
+        
+        if (!token || !userData) {
+            window.location.href = '/vendor-login';
+            return;
+        }
+
+        const parsedUser = JSON.parse(userData);
+        if (parsedUser.user_type !== 'vendor' && parsedUser.user_type !== 'user') {
+            window.location.href = '/vendor-login';
+            return;
+        }
+
+        setUser(parsedUser);
+        fetchUserProfile(parsedUser.id);
+
+        const cleanupFns: Array<() => void> = [];
         const mobileMenu = document.getElementById('mobile-menu');
         const navLinks = document.getElementById('nav-links');
         
@@ -12,13 +57,23 @@ const VendorDashboard = () => {
                 navLinks.classList.toggle('active');
                 mobileMenu.classList.toggle('active');
             };
-            const handleClick = (e: MouseEvent) => e.preventDefault();
             mobileMenu.addEventListener('click', toggleMenu);
-            return () => {
-                mobileMenu.removeEventListener('click', toggleMenu);
-            };
+            cleanupFns.push(() => mobileMenu.removeEventListener('click', toggleMenu));
         }
-    }, [])
+
+        return () => cleanupFns.forEach((fn) => fn());
+    }, []);
+
+    const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/vendor-login';
+    };
+    
+    if (isLoading) {
+        return <div className="page-loading">Loading vendor dashboard...</div>;
+    }
     
     return (
         <>
@@ -36,19 +91,22 @@ const VendorDashboard = () => {
             <div className="nav-dashboard">
                 <a href="/" className="btn">Home</a>
                 
-                <a href="/vendor-login" className="btn-signout">Logout</a>
+                <a href="/vendor-login" className="btn-signout" onClick={handleLogout}>Logout</a>
 
                 <div className="profile-container" id="profileTrigger">
                     <div className="profile-circle">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" />
+                        <img
+                            src={user?.profile_picture || (user ? `https://ui-avatars.com/api/?name=${encodeURIComponent(`${user.firstName} ${user.lastName}`)}&background=0D8ABC&color=fff&rounded=true` : 'https://ui-avatars.com/api/?name=Vendor&background=0D8ABC&color=fff&rounded=true')}
+                            alt="Profile"
+                        />
                     </div>
 
                     <div className="profile-dropdown">
                         <div className="dropdown-content">
-                            <p className="vendor-name">James Bolaji</p>
-                            <p className="vendor-email">james.b@tealbinternational.com</p>
-                            <div className="status-badge verified">
-                                <i className="fas fa-check-circle"></i> Verified Vendor
+                            <p className="vendor-name">{user ? `${user.firstName} ${user.lastName}` : 'Loading...'}</p>
+                            <p className="vendor-email">{user?.email}</p>
+                            <div className={`status-badge ${user?.status?.toLowerCase() === 'active' ? 'green' : 'pending'}`}>
+                                <i className="fas fa-check-circle"></i> {user?.status ?? 'PENDING'}
                             </div>
                             <hr />
                             <a href="/account-settings">Account Settings</a>
@@ -57,16 +115,16 @@ const VendorDashboard = () => {
                     </div>
                 </div>
 
-                <a href="/account-settings" className="btn-account"><i className="fa-solid fa-user-gear"></i></a>
+                <a href="/account-settings" className="btn-account" title="Account Settings"><i className="fa-solid fa-user-gear"></i></a>
             </div>
         </div>
     </div>
 
     <section className='page-hero'>
         <div className='container reveal'>
-            <h1 className='page-title'><span>Welcome, </span> James </h1>
+            <h1 className='page-title'><span>Welcome, </span> {user?.firstName ?? 'Vendor'}</h1>
             <hr />
-            <p className='page-lead'>Utility-first vendor area focused on status, renewal, and QR visibility.</p>
+            <p className='page-lead'>{user?.organization_name ? `${user.organization_name} vendor area` : 'Utility-first vendor area focused on status, renewal, and QR visibility.'}</p>
         </div>
     </section>
 
@@ -74,16 +132,20 @@ const VendorDashboard = () => {
         <div className='container grid-3'>
             <div className='card metric-card reveal'>
                 <div className='metric-label'>Status</div>
-                <div className='metric-value-status'>Verified</div>
-                <span className='badge green'>Active</span>
+                {/* <div className='metric-value-status'>{user?.status ?? 'PENDING'}</div> */}
+                <span style={{ fontSize:"34px",
+                    fontWeight:900,
+                    marginTop:"6px" }} className={`badge ${user?.status === 'ACTIVE' || user?.status === 'VERIFIED' ? 'green' : 'amber'}`}>
+                    {user?.status === 'ACTIVE' || user?.status === 'VERIFIED' ? 'Active' : user?.status ? user.status : 'Pending'}
+                </span>
             </div>
             <div className='card metric-card reveal'>
                 <div className='metric-label'>Vendor ID</div>
-                <div className='metric-value'>SVV-10293</div>
+                <div className='metric-value'>{user?.vendor_id || 'Not assigned'}</div>
             </div>
             <div className='card metric-card reveal'>
-                <div className='metric-label'>Expires In</div>
-                <div className='metric-value'>76 Days</div>
+                <div className='metric-label'>Valid Until</div>
+                <div className='metric-value'>{formatDate(user?.expires_at)}</div>
             </div>
         </div>
     </section>
@@ -101,14 +163,14 @@ const VendorDashboard = () => {
                             <div className="profile-details-card">
                                 <div className="profile-header">
                                     <div className="photo-wrapper">
-                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User Portrait"
+                                        <img src={user?.profile_picture || 'https://randomuser.me/api/portraits/men/32.jpg'} alt="User Portrait"
                                             id="profile-photo" className="profile-photo" />
                                     </div>
 
                                     <div className="header-text">
-                                        <h2>James K.</h2>
-                                        <p>Steedless Vendor</p>
-                                        <p className="sub-text">Stuart Sensor</p>
+                                        <h2>{user ? `${user.firstName} ${user.lastName}` : 'Vendor Name'}</h2>
+                                        <p>{user?.organization_name || 'Vendor Organization'}</p>
+                                        <p className="sub-text">{user?.email || 'vendor@example.com'}</p>
                                     </div>
 
                                     <div className="action-buttons">
@@ -119,10 +181,10 @@ const VendorDashboard = () => {
 
                                 <div className='meta-grid' style={{"margin":"18px 0"}}>
                                     <div className='field'>
-                                        <label>Vendor ID</label>SVV-10293
+                                        <label>Vendor ID</label>{user?.vendor_id || 'Not assigned'}
                                     </div>
                                     <div className='field'>
-                                        <label>Valid Until</label>15 June 2026
+                                        <label>Valid Until</label>{formatDate(user?.expires_at)}
                                     </div>
                                     <div className='field' style={{"gridColumn":"1/-1"}}>
                                         <label>Issued By</label>Street Vendor Standards Council
@@ -140,8 +202,8 @@ const VendorDashboard = () => {
                     <ul className="stats-list">
                         <li>
                             <span className="label">Verification Status:</span>
-                            <span className="value status-verify">
-                                <i className="fas fa-check-circle"></i> VERIFIED
+                            <span className={`value status-verify ${isVerified ? 'verified' : 'not-verified'}`}>
+                                <i className={`fas ${isVerified ? 'fa-check-circle' : 'fa-times-circle'}`}></i> {isVerified ? 'VERIFIED' : 'NOT VERIFIED'}
                             </span>
                         </li>
 
