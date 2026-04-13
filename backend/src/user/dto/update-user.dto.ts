@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsDate, IsEmail, IsOptional, IsString, IsUrl } from 'class-validator';
-import { Status } from '../../../generated/prisma/enums';
+import { Status } from '@prisma/client';
 
 export class UpdateUserDto {
   @IsOptional()

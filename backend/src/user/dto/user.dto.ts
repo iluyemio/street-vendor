@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 import { IsDate, IsEnum, IsOptional, IsString } from "class-validator";
-import { Status } from "../../../generated/prisma/enums";
+import { Status } from "@prisma/client";
 
 export class UserDto {
   @IsString()
