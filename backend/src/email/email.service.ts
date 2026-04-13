@@ -115,13 +115,12 @@ export class EmailService {
       console.log('Email sent successfully! Request ID:', response.data.request_id);
       return { success: true, messageId: response.data.request_id };
     } catch (error: unknown) {
-      const errMsg = axios.isAxiosError(error)
-        ? error.response?.data || error.message
-        : error instanceof Error
-        ? error.message
-        : 'Unknown error while sending email.';
-      // const errMsg = 'Unknown error while sending email.';
-      console.error(`Failed to send email to ${to}:`, errMsg);
+    const errMsg = axios.isAxiosError(error)
+  ? JSON.stringify(error.response?.data) || error.message
+  : error instanceof Error
+  ? error.message
+  : 'Unknown error while sending email.';
+console.error('Full error:', JSON.stringify(error));
       return { success: false, error: errMsg };
     }
   }
