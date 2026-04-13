@@ -68,7 +68,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
 const FROM_NAME = process.env.FROM_NAME ?? 'Street Vendor Verified';
-const FROM_ADDRESS = process.env.FROM_EMAIL_ADDRESS ?? 'noreply@streetvendorverified.org.uk';
+const FROM_ADDRESS = process.env.FROM_EMAIL_ADDRESS ?? 'support@mysoundsglobal.com';
 const ZEPTOMAIL_API_URL = process.env.ZEPTOMAIL_API_URL ?? 'https://api.zeptomail.com/v1.1/email';
 
 @Injectable()
