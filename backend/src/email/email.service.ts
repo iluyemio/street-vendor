@@ -73,7 +73,8 @@ const ZEPTOMAIL_API_URL = process.env.ZEPTOMAIL_API_URL ?? 'https://api.zeptomai
 
 @Injectable()
 export class EmailService {
-  async sendEmail(to: string, subject: string, htmlBody: string, from = FROM_NAME) {
+  // async sendEmail(to: string, subject: string, htmlBody: string, from = FROM_NAME) {
+  async sendEmail({ to, subject, htmlBody, from = FROM_NAME }: { to: string; subject: string; htmlBody: string; from?: string }) {
     if (!process.env.ZEPTOMAIL_API_KEY) {
       const errorMessage = 'ZEPTOMAIL_API_KEY is not configured.';
       console.error(errorMessage);
