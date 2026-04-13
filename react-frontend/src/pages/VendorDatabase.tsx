@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles.css';
 import '../styles2.css';
+import { apiUrl } from '../lib/api';
 
 const VendorDatabase = () => {
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ const VendorDatabase = () => {
     const fetchStats = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/admin/stats', {
+            const response = await fetch(apiUrl('/api/admin/stats'), {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -85,7 +86,7 @@ const VendorDatabase = () => {
     const fetchApplicants = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/admin/applicants', {
+            const response = await fetch(apiUrl('/api/admin/applicants'), {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -100,7 +101,7 @@ const VendorDatabase = () => {
     const fetchVendors = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/admin/vendors', {
+            const response = await fetch(apiUrl('/api/admin/vendors'), {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -172,7 +173,7 @@ const VendorDatabase = () => {
                 return;
             }
 
-            const response = await fetch(`http://localhost:3000/api/admin/promote-vendor/${selectedApplicant.id}`, {
+            const response = await fetch(apiUrl(`/api/admin/promote-vendor/${selectedApplicant.id}`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

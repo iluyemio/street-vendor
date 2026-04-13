@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../styles.css';
+import { apiUrl } from '../lib/api';
 
 const VendorProfile = () => {
     const { vendorId } = useParams<{ vendorId?: string }>();
@@ -36,7 +37,7 @@ const VendorProfile = () => {
             setIsLoading(true);
             setStatusMessage('');
             try {
-                const response = await fetch(`http://localhost:3000/api/vendor/${encodeURIComponent(vendorId)}`);
+                const response = await fetch(apiUrl(`/api/vendor/${encodeURIComponent(vendorId)}`));
                 if (!response.ok) {
                     const errorData = await response.json();
                     setStatusMessage(errorData.message || 'Vendor not found.');

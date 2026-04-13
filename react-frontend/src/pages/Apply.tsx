@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { notifySuccess, notifyError } from '../lib/notifications';
 import '../styles.css';
+import { apiUrl } from '../lib/api';
 
 const Apply = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,7 +40,7 @@ const Apply = () => {
         };
 
         try {
-            const response = await fetch('http://localhost:3000/api/apply', {
+            const response = await fetch(apiUrl('/api/apply'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

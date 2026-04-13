@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import '../styles.css';
+import { apiUrl } from '../lib/api';
 
 const VendorDashboard = () => {
     const [user, setUser] = useState<any>(null);
@@ -14,7 +15,7 @@ const VendorDashboard = () => {
 
     const fetchUserProfile = async (id: number) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/user/profile/${id}`);
+            const response = await fetch(apiUrl(`/api/user/profile/${id}`));
             if (response.ok) {
                 const freshUser = await response.json();
                 setUser(freshUser);

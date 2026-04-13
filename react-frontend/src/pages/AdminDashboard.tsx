@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import '../styles.css';
+import { apiUrl } from '../lib/api';
 
 const AdminDashboard = () => {
     const [user, setUser] = useState<any>(null);
@@ -57,7 +58,7 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/admin/stats', {
+            const response = await fetch(apiUrl('/api/admin/stats'), {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -72,7 +73,7 @@ const AdminDashboard = () => {
     const fetchApplicants = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/admin/applicants', {
+            const response = await fetch(apiUrl('/api/admin/applicants'), {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -87,7 +88,7 @@ const AdminDashboard = () => {
     const fetchRecentActivity = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/admin/recent-activity', {
+            const response = await fetch(apiUrl('/api/admin/recent-activity'), {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import '../styles.css';
+import { apiUrl } from '../lib/api';
 
 const AdminAccountSettings = () => {
     const [user, setUser] = useState<any>(null);
@@ -64,7 +65,7 @@ const AdminAccountSettings = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:3000/api/user/profile', {
+            const response = await fetch(apiUrl('/api/user/profile'), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

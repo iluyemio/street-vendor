@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import '../styles.css';
+import { apiUrl } from '../lib/api';
 
 const AdminLogin = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,7 +41,7 @@ const AdminLogin = () => {
         const password = (form.querySelector('#password') as HTMLInputElement).value;
 
         try {
-            const response = await fetch('http://localhost:3000/api/user/login', {
+            const response = await fetch(apiUrl('/api/user/login'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

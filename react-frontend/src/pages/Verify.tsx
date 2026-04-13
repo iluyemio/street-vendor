@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import '../styles.css';
+import { apiUrl } from '../lib/api';
 
 const Verify = () => {
     const [vendorCode, setVendorCode] = useState('SVV-10293');
@@ -36,7 +37,7 @@ const Verify = () => {
         setStatusMessage('');
 
         try {
-            const response = await fetch(`http://localhost:3000/api/vendor/${encodeURIComponent(vendorCode.trim())}`);
+            const response = await fetch(apiUrl(`/api/vendor/${encodeURIComponent(vendorCode.trim())}`));
             if (!response.ok) {
                 const errorData = await response.json();
                 setStatusMessage(errorData.message || 'Vendor not found');
