@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../styles.css';
 import { apiUrl } from '../lib/api';
 
@@ -16,7 +16,6 @@ const AdminLogin = () => {
                 navLinks.classList.toggle('active');
                 mobileMenu.classList.toggle('active');
             };
-            const handleClick = (e: MouseEvent) => e.preventDefault();
             mobileMenu.addEventListener('click', toggleMenu);
             return () => {
                 mobileMenu.removeEventListener('click', toggleMenu);

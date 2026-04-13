@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import '../styles.css';
 
 const Faq = () => {
@@ -12,7 +12,6 @@ const Faq = () => {
                 navLinks.classList.toggle('active');
                 mobileMenu.classList.toggle('active');
             };
-            const handleClick = (e: MouseEvent) => e.preventDefault();
             mobileMenu.addEventListener('click', toggleMenu);
             return () => {
                 mobileMenu.removeEventListener('click', toggleMenu);
