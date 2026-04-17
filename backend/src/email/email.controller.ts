@@ -81,4 +81,87 @@ export class EmailController {
       messageId: applicantResult.messageId,
     };
   }
+
+  @Post('admin/create-vendor-manual')
+  async createVendorManually(@Body() payload: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    organization_name: string;
+    expires_at: string;
+    posterAddress?: string;
+    mainAddress?: string;
+    contactNumber?: string;
+    businessSector?: string;
+    businessRegion?: string;
+    taxId?: string;
+  }) {
+    const {
+      firstName,
+      lastName,
+      email,
+      organization_name,
+      expires_at,
+      posterAddress,
+      mainAddress,
+      contactNumber,
+      businessSector,
+      businessRegion,
+      taxId,
+    } = payload;
+
+    if (!firstName || !lastName || !email || !organization_name || !expires_at) {
+      throw new BadRequestException('firstName, lastName, email, organization_name and expires_at are required.');
+    }
+
+    const expiresDate = new Date(expires_at);
+    if (Number.isNaN(expiresDate.getTime())) {
+      throw new BadRequestException('expires_at must be a valid date.');
+    }
+
+    const temporaryPassword = Math.random().toString(36).slice(-10);
+    const vendorId = `SVV-${Date.now().toString().slice(-6)}`;
+
+    const createdUser = await this.userService.createUser({
+      firstName,
+      lastName,
+      email,
+      password: temporaryPassword,
+      organization_name,
+      posterAddress,
+      mainAddress,
+      contactNumber,
+      businessSector,
+      businessRegion,
+      taxId,
+      user_type: 'vendor',
+      status: 'VERIFIED' as const,
+      vendor_id: vendorId,
+      expires_at: expiresDate,
+    });
+
+    await this.emailService.sendEmail({
+      to: email,
+      subject: 'Your Street Vendor Account Has Been Created',
+      htmlBody: `
+        <h2>Vendor Account Created</h2>
+        <p>Hello ${firstName} ${lastName},</p>
+        <p>Your vendor account has been created by an administrator and verified automatically.</p>
+        <ul>
+          <li><strong>Email:</strong> ${email}</li>
+          <li><strong>Temporary Password:</strong> ${temporaryPassword}</li>
+          <li><strong>Vendor ID:</strong> ${vendorId}</li>
+          <li><strong>Valid Until:</strong> ${expiresDate.toDateString()}</li>
+        </ul>
+        <p>Please sign in and change your password immediately.</p>
+      `,
+    });
+
+    const { password, ...safeUser } = createdUser as any;
+    return {
+      success: true,
+      user: safeUser,
+      message: 'Vendor created, verified, and credentials sent by email.',
+    };
+  }
 }

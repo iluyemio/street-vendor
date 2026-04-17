@@ -4,6 +4,8 @@ import '../styles.css';
 import { apiUrl } from '../lib/api';
 
 const AccountSettings = () => {
+    const MAX_UPLOAD_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
+    const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
     const [user, setUser] = useState<any>(null);
     const [organizationName, setOrganizationName] = useState('');
     const [posterAddress, setPosterAddress] = useState('');
@@ -12,6 +14,7 @@ const AccountSettings = () => {
     const [businessSector, setBusinessSector] = useState('');
     const [businessRegion, setBusinessRegion] = useState('');
     const [taxId, setTaxId] = useState('');
+    const [profilePicture, setProfilePicture] = useState('');
     const [message, setMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -48,6 +51,7 @@ const AccountSettings = () => {
         setBusinessSector(currentUser.businessSector || '');
         setBusinessRegion(currentUser.businessRegion || '');
         setTaxId(currentUser.taxId || '');
+        setProfilePicture(currentUser.profile_picture || '');
 
         return () => cleanup.forEach((fn) => fn());
     }, []);
@@ -80,6 +84,7 @@ const AccountSettings = () => {
                 businessSector,
                 businessRegion,
                 taxId,
+                profile_picture: profilePicture || undefined,
             };
 
             const response = await fetch(apiUrl('/api/user/profile'), {
@@ -103,6 +108,72 @@ const AccountSettings = () => {
             setMessage('Network error. Please try again later.');
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const compressImageToDataUrl = (file: File, maxWidth = 1000, maxHeight = 1000, quality = 0.8) =>
+        new Promise<string>((resolve, reject) => {
+            const image = new Image();
+            const objectUrl = URL.createObjectURL(file);
+
+            image.onload = () => {
+                const canvas = document.createElement('canvas');
+                let { width, height } = image;
+
+                const widthRatio = maxWidth / width;
+                const heightRatio = maxHeight / height;
+                const scale = Math.min(1, widthRatio, heightRatio);
+
+                width = Math.round(width * scale);
+                height = Math.round(height * scale);
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    URL.revokeObjectURL(objectUrl);
+                    reject(new Error('Image processing context unavailable.'));
+                    return;
+                }
+
+                ctx.drawImage(image, 0, 0, width, height);
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                URL.revokeObjectURL(objectUrl);
+                resolve(dataUrl);
+            };
+
+            image.onerror = () => {
+                URL.revokeObjectURL(objectUrl);
+                reject(new Error('Unable to process selected image.'));
+            };
+
+            image.src = objectUrl;
+        });
+
+    const handleProfileImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+            setMessage('Only JPG, PNG, or WEBP images are allowed.');
+            e.currentTarget.value = '';
+            return;
+        }
+
+        if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+            setMessage('Image is too large. Max allowed size is 2MB.');
+            e.currentTarget.value = '';
+            return;
+        }
+
+        try {
+            const compressedDataUrl = await compressImageToDataUrl(file);
+            setProfilePicture(compressedDataUrl);
+            setMessage('Profile image selected and optimized. Click Save Update to persist.');
+        } catch (error) {
+            console.error('Image compression failed:', error);
+            setMessage('Unable to process selected image.');
         }
     };
     
@@ -174,7 +245,7 @@ const AccountSettings = () => {
                         <div className="profile-header">
                             <div className="photo-wrapper">
                                 <img
-                                    src={user?.profile_picture || (user ? buildAvatar(`${user.firstName} ${user.lastName}`) : 'https://ui-avatars.com/api/?name=Vendor&background=0D8ABC&color=fff&rounded=true')}
+                                    src={profilePicture || user?.profile_picture || (user ? buildAvatar(`${user.firstName} ${user.lastName}`) : 'https://ui-avatars.com/api/?name=Vendor&background=0D8ABC&color=fff&rounded=true')}
                                     alt="User Portrait"
                                     id="profile-photo"
                                     className="profile-photo"
@@ -214,6 +285,16 @@ const AccountSettings = () => {
                             information.</p>
 
                         <form id="profileUpdateForm" onSubmit={handleSubmit}>
+                            <div className="form-group">
+                                <label htmlFor="profilePictureUpload">Profile Image</label>
+                                <input
+                                    type="file"
+                                    id="profilePictureUpload"
+                                    accept="image/png,image/jpeg,image/webp"
+                                    onChange={handleProfileImageUpload}
+                                />
+                            </div>
+
                             <div className="form-group">
                                 <label htmlFor="vendorName">Company/Vendor Name</label>
                                 <input

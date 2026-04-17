@@ -71,6 +71,7 @@ export class UserService {
                 businessSector:data.businessSector,
                 businessRegion:data.businessRegion,
                 taxId:data.taxId,
+                status:data.status,
                 user_type:data.user_type,
                 vendor_id:data.vendor_id,
                 expires_at:data.expires_at

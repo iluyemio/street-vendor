@@ -6,6 +6,10 @@ import { apiUrl } from '../lib/api';
 const VendorDashboard = () => {
     const [user, setUser] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [passwordMessage, setPasswordMessage] = useState('');
+    const [isPasswordUpdating, setIsPasswordUpdating] = useState(false);
     const isVerified = user?.status === 'ACTIVE' || user?.status === 'VERIFIED';
 
     const formatDate = (value: string | null | undefined) => {
@@ -70,6 +74,50 @@ const VendorDashboard = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         window.location.href = '/vendor-login';
+    };
+
+    const handlePasswordUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setPasswordMessage('');
+        if (!user?.id) {
+            setPasswordMessage('Unable to update password. Please sign in again.');
+            return;
+        }
+        if (!newPassword || newPassword.length < 8) {
+            setPasswordMessage('New password must be at least 8 characters.');
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            setPasswordMessage('Password confirmation does not match.');
+            return;
+        }
+
+        setIsPasswordUpdating(true);
+        try {
+            const response = await fetch(apiUrl('/api/user/profile'), {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: user.id,
+                    password: newPassword,
+                }),
+            });
+            const result = await response.json();
+            if (!response.ok) {
+                setPasswordMessage(result?.message || 'Failed to update password.');
+                return;
+            }
+            setPasswordMessage('Password updated successfully.');
+            setNewPassword('');
+            setConfirmPassword('');
+        } catch (error) {
+            console.error('Failed to update password:', error);
+            setPasswordMessage('Network error while updating password.');
+        } finally {
+            setIsPasswordUpdating(false);
+        }
     };
     
     if (isLoading) {
@@ -210,7 +258,7 @@ const VendorDashboard = () => {
 
                         <li>
                             <span className="label">Sales This Week:</span>
-                            <span className="value">$1,250</span>
+                            <span className="value">$0</span>
                         </li>
 
                         <li>
@@ -227,7 +275,7 @@ const VendorDashboard = () => {
 
                         <li>
                             <span className="label">Compliance Tasks:</span>
-                            <span className="value">2 Pending</span>
+                            <span className="value">0 Pending</span>
                         </li>
                     </ul>
                 </div>
@@ -245,6 +293,38 @@ const VendorDashboard = () => {
                         <i className="fas fa-exclamation-triangle"></i>
                         <span>Report an Issue</span>
                     </div>
+                </div>
+
+                <div className="card o-card" style={{ marginTop: '18px', padding: '16px' }}>
+                    <h3>Change Password</h3>
+                    <form onSubmit={handlePasswordUpdate} style={{ marginTop: '10px' }}>
+                        <div className="input-group" style={{ marginBottom: '10px' }}>
+                            <label htmlFor="newPassword">New Password</label>
+                            <input
+                                id="newPassword"
+                                type="password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                minLength={8}
+                                required
+                            />
+                        </div>
+                        <div className="input-group" style={{ marginBottom: '10px' }}>
+                            <label htmlFor="confirmPassword">Confirm New Password</label>
+                            <input
+                                id="confirmPassword"
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                minLength={8}
+                                required
+                            />
+                        </div>
+                        <button type="submit" className="btn btn-green" disabled={isPasswordUpdating}>
+                            {isPasswordUpdating ? 'Updating...' : 'Update Password'}
+                        </button>
+                        {passwordMessage && <div className="status-message" style={{ marginTop: '10px' }}>{passwordMessage}</div>}
+                    </form>
                 </div>
             </div>
         </div>

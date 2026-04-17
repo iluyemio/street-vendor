@@ -14,6 +14,21 @@ const VendorDatabase = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [manualMessage, setManualMessage] = useState('');
+    const [isManualSubmitting, setIsManualSubmitting] = useState(false);
+    const [manualVendorForm, setManualVendorForm] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        organization_name: '',
+        expires_at: '',
+        posterAddress: '',
+        mainAddress: '',
+        contactNumber: '',
+        businessSector: '',
+        businessRegion: '',
+        taxId: '',
+    });
     const [stats, setStats] = useState({
         totalVendors: 0,
         verifiedVendors: 0,
@@ -201,6 +216,54 @@ const VendorDatabase = () => {
             setMessage('Failed to create vendor. Please try again.');
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleManualVendorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setManualVendorForm((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleManualVendorSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setManualMessage('');
+        setIsManualSubmitting(true);
+        try {
+            const response = await fetch(apiUrl('/api/admin/create-vendor-manual'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(manualVendorForm),
+            });
+
+            const result = await response.json();
+            if (!response.ok) {
+                setManualMessage(result?.message || 'Failed to manually create vendor.');
+                return;
+            }
+
+            setManualMessage('Manual vendor account created, verified, and email sent.');
+            setManualVendorForm({
+                firstName: '',
+                lastName: '',
+                email: '',
+                organization_name: '',
+                expires_at: '',
+                posterAddress: '',
+                mainAddress: '',
+                contactNumber: '',
+                businessSector: '',
+                businessRegion: '',
+                taxId: '',
+            });
+            fetchVendors();
+            fetchStats();
+        } catch (error) {
+            console.error('Failed to create manual vendor:', error);
+            setManualMessage('Network error while creating manual vendor.');
+        } finally {
+            setIsManualSubmitting(false);
         }
     };
     
@@ -466,6 +529,69 @@ const VendorDatabase = () => {
                     
                     {message && <div className="status-message" style={{marginTop: '10px'}}>{message}</div>}
                 </form>
+
+            <div style={{margin: '20px 0', borderTop: '1px solid #e9ecef'}}></div>
+
+            <div className="modal-header-hero">
+                <h1 className="page-title">Manual Vendor Creation</h1>
+                <p className="page-lead">Create and verify a vendor directly, then email login credentials automatically.</p>
+            </div>
+
+            <form className="modal-body2" onSubmit={handleManualVendorSubmit}>
+                <div className="form-grid">
+                    <div className="input-group">
+                        <label htmlFor="manualFirstName">First Name</label>
+                        <input id="manualFirstName" name="firstName" type="text" value={manualVendorForm.firstName} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualLastName">Last Name</label>
+                        <input id="manualLastName" name="lastName" type="text" value={manualVendorForm.lastName} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualEmail">Email</label>
+                        <input id="manualEmail" name="email" type="email" value={manualVendorForm.email} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualOrganization">Organization / Company</label>
+                        <input id="manualOrganization" name="organization_name" type="text" value={manualVendorForm.organization_name} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualExpiry">Valid Until</label>
+                        <input id="manualExpiry" name="expires_at" type="date" value={manualVendorForm.expires_at} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualContactNumber">Contact Number</label>
+                        <input id="manualContactNumber" name="contactNumber" type="text" value={manualVendorForm.contactNumber} onChange={handleManualVendorChange} />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualPosterAddress">Poster Address</label>
+                        <input id="manualPosterAddress" name="posterAddress" type="text" value={manualVendorForm.posterAddress} onChange={handleManualVendorChange} />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualMainAddress">Main Address</label>
+                        <input id="manualMainAddress" name="mainAddress" type="text" value={manualVendorForm.mainAddress} onChange={handleManualVendorChange} />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualBusinessSector">Business Sector</label>
+                        <input id="manualBusinessSector" name="businessSector" type="text" value={manualVendorForm.businessSector} onChange={handleManualVendorChange} />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualBusinessRegion">Business Region</label>
+                        <input id="manualBusinessRegion" name="businessRegion" type="text" value={manualVendorForm.businessRegion} onChange={handleManualVendorChange} />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualTaxId">Tax ID</label>
+                        <input id="manualTaxId" name="taxId" type="text" value={manualVendorForm.taxId} onChange={handleManualVendorChange} />
+                    </div>
+                </div>
+
+                <div className="hero-actions full-width">
+                    <button type="submit" className="verify" disabled={isManualSubmitting}>
+                        {isManualSubmitting ? 'Creating...' : 'Create Manual Vendor'}
+                    </button>
+                </div>
+                {manualMessage && <div className="status-message" style={{marginTop: '10px'}}>{manualMessage}</div>}
+            </form>
         </div>
     </div>
 
