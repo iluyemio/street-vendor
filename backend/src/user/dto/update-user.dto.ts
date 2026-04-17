@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsEmail, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsDate, IsEmail, IsOptional, IsString } from 'class-validator';
 import { Status } from '@prisma/client';
 
 export class UpdateUserDto {
@@ -20,7 +20,7 @@ export class UpdateUserDto {
   password?: string;
 
   @IsOptional()
-  @IsUrl()
+  @IsString()
   profile_picture?: string;
 
   @IsOptional()
