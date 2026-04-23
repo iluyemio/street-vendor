@@ -354,6 +354,7 @@ export class UserService {
                     firstName: true,
                     lastName: true,
                     email: true,
+                    profile_picture: true,
                     organization_name: true,
                     status: true,
                     vendor_id: true,

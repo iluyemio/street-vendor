@@ -4,10 +4,13 @@ import '../styles.css';
 import { apiUrl } from '../lib/api';
 
 const AdminAccountSettings = () => {
+    const MAX_UPLOAD_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
+    const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
     const [user, setUser] = useState<any>(null);
     const [adminName, setAdminName] = useState('');
     const [emailAddress, setEmailAddress] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [profilePicture, setProfilePicture] = useState('');
     const [message, setMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -42,6 +45,7 @@ const AdminAccountSettings = () => {
         setAdminName(`${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim());
         setEmailAddress(currentUser.email || '');
         setPhoneNumber(currentUser.contactNumber || '');
+        setProfilePicture(currentUser.profile_picture || '');
 
         return () => cleanup.forEach((fn) => fn());
     }, []);
@@ -76,6 +80,7 @@ const AdminAccountSettings = () => {
                     lastName: adminName.split(' ').slice(1).join(' ') || '',
                     email: emailAddress,
                     contactNumber: phoneNumber,
+                    profile_picture: profilePicture || undefined,
                 }),
             });
 
@@ -91,6 +96,72 @@ const AdminAccountSettings = () => {
             setMessage('Network error. Please try again later.');
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const compressImageToDataUrl = (file: File, maxWidth = 1000, maxHeight = 1000, quality = 0.8) =>
+        new Promise<string>((resolve, reject) => {
+            const image = new Image();
+            const objectUrl = URL.createObjectURL(file);
+
+            image.onload = () => {
+                const canvas = document.createElement('canvas');
+                let { width, height } = image;
+
+                const widthRatio = maxWidth / width;
+                const heightRatio = maxHeight / height;
+                const scale = Math.min(1, widthRatio, heightRatio);
+
+                width = Math.round(width * scale);
+                height = Math.round(height * scale);
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    URL.revokeObjectURL(objectUrl);
+                    reject(new Error('Image processing context unavailable.'));
+                    return;
+                }
+
+                ctx.drawImage(image, 0, 0, width, height);
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                URL.revokeObjectURL(objectUrl);
+                resolve(dataUrl);
+            };
+
+            image.onerror = () => {
+                URL.revokeObjectURL(objectUrl);
+                reject(new Error('Unable to process selected image.'));
+            };
+
+            image.src = objectUrl;
+        });
+
+    const handleProfileImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+            setMessage('Only JPG, PNG, or WEBP images are allowed.');
+            e.currentTarget.value = '';
+            return;
+        }
+
+        if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+            setMessage('Image is too large. Max allowed size is 2MB.');
+            e.currentTarget.value = '';
+            return;
+        }
+
+        try {
+            const compressedDataUrl = await compressImageToDataUrl(file);
+            setProfilePicture(compressedDataUrl);
+            setMessage('Profile image selected and optimized. Click Save Update to persist.');
+        } catch (error) {
+            console.error('Image compression failed:', error);
+            setMessage('Unable to process selected image.');
         }
     };
 
@@ -114,7 +185,7 @@ const AdminAccountSettings = () => {
 
                 <div className="profile-container" id="profileTrigger">
                     <div className="profile-circle">
-                        <img src={user?.profile_picture || 'https://randomuser.me/api/portraits/men/31.jpg'} alt="Profile" />
+                        <img src={profilePicture || user?.profile_picture || 'https://randomuser.me/api/portraits/men/31.jpg'} alt="Profile" />
                     </div>
 
                     <div className="profile-dropdown">
@@ -159,7 +230,7 @@ const AdminAccountSettings = () => {
                         <div className="profile-header">
                             <div className="photo-wrapper">
                                 <img
-                                    src={user?.profile_picture || 'https://randomuser.me/api/portraits/men/31.jpg'}
+                                    src={profilePicture || user?.profile_picture || 'https://randomuser.me/api/portraits/men/31.jpg'}
                                     alt="User Portrait"
                                     className="profile-photo"
                                 />
@@ -179,6 +250,16 @@ const AdminAccountSettings = () => {
                             information.</p>
 
                         <form id="profileUpdateForm" onSubmit={handleSubmit}>
+                            <div className="form-group">
+                                <label htmlFor="profilePictureUpload">Profile Image</label>
+                                <input
+                                    type="file"
+                                    id="profilePictureUpload"
+                                    accept="image/png,image/jpeg,image/webp"
+                                    onChange={handleProfileImageUpload}
+                                />
+                            </div>
+
                             <div className="form-group">
                                 <label htmlFor="adminName">Administrator Name</label>
                                 <input

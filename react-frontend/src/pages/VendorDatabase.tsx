@@ -7,6 +7,7 @@ import { apiUrl } from '../lib/api';
 
 const VendorDatabase = () => {
     const navigate = useNavigate();
+    const [user, setUser] = useState<any>(null);
     const [applicants, setApplicants] = useState<any[]>([]);
     const [vendors, setVendors] = useState<any[]>([]);
     const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
@@ -35,6 +36,8 @@ const VendorDatabase = () => {
         deniedVendors: 0,
         pendingApplications: 0
     });
+    const buildAvatar = (name: string) =>
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0D8ABC&color=fff&rounded=true`;
 
     const fetchStats = async () => {
         try {
@@ -73,11 +76,12 @@ const VendorDatabase = () => {
             return;
         }
 
-        const user = JSON.parse(userData);
-        if (user.user_type !== 'admin') {
+        const currentUser = JSON.parse(userData);
+        if (currentUser.user_type !== 'admin') {
             window.location.href = '/admin-login';
             return;
         }
+        setUser(currentUser);
 
         fetchApplicants();
         fetchStats();
@@ -286,13 +290,16 @@ const VendorDatabase = () => {
 
                 <div className="profile-container" id="profileTrigger">
                     <div className="profile-circle">
-                        <img src="https://randomuser.me/api/portraits/men/31.jpg" alt="Profile" />
+                        <img
+                            src={user?.profile_picture || (user ? buildAvatar(`${user.firstName} ${user.lastName}`) : buildAvatar('Administrator'))}
+                            alt="Profile"
+                        />
                     </div>
 
                     <div className="profile-dropdown">
                         <div className="dropdown-content">
-                            <p className="vendor-name">Daren Ola</p>
-                            <p className="vendor-email">daren.o@streetvendor.com</p>
+                            <p className="vendor-name">{user ? `${user.firstName} ${user.lastName}` : 'Administrator'}</p>
+                            <p className="vendor-email">{user?.email || 'admin@example.com'}</p>
                             <div className="status-badge verified">
                                 <i className="fas fa-check-circle"></i> Administrator
                             </div>
@@ -372,7 +379,11 @@ const VendorDatabase = () => {
                                     <tr key={vendor.id}>
                                         <td>
                                             <div className="vendor-cell">
-                                                <img src={`https://i.pravatar.cc/100?u=${vendor.email}`} alt={vendor.firstName} className="vendor-img" />
+                                                <img
+                                                    src={vendor.profile_picture || `https://i.pravatar.cc/100?u=${vendor.email}`}
+                                                    alt={vendor.firstName}
+                                                    className="vendor-img"
+                                                />
                                                 {vendor.organization_name || 'Vendor'}
                                             </div>
                                         </td>

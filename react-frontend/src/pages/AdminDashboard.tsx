@@ -16,6 +16,8 @@ const AdminDashboard = () => {
     const [applicants, setApplicants] = useState<any[]>([]);
     const [filterStatus, setFilterStatus] = useState('all');
     const [recentActivity, setRecentActivity] = useState<any[]>([]);
+    const buildAvatar = (name: string) =>
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0D8ABC&color=fff&rounded=true`;
 
     const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
@@ -145,7 +147,10 @@ const AdminDashboard = () => {
 
                 <div className="profile-container" id="profileTrigger">
                     <div className="profile-circle">
-                        <img src="https://randomuser.me/api/portraits/men/31.jpg" alt="Profile" />
+                        <img
+                            src={user?.profile_picture || (user ? buildAvatar(`${user.firstName} ${user.lastName}`) : buildAvatar('Administrator'))}
+                            alt="Profile"
+                        />
                     </div>
 
                     <div className="profile-dropdown">
