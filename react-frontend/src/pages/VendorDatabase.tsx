@@ -6,6 +6,8 @@ import '../styles2.css';
 import { apiUrl } from '../lib/api';
 
 const VendorDatabase = () => {
+    const MAX_UPLOAD_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
+    const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
     const navigate = useNavigate();
     const [user, setUser] = useState<any>(null);
     const [applicants, setApplicants] = useState<any[]>([]);
@@ -29,6 +31,7 @@ const VendorDatabase = () => {
         businessSector: '',
         businessRegion: '',
         taxId: '',
+        profile_picture: '',
     });
     const [stats, setStats] = useState({
         totalVendors: 0,
@@ -228,6 +231,69 @@ const VendorDatabase = () => {
         setManualVendorForm((prev) => ({ ...prev, [name]: value }));
     };
 
+    const compressImageToDataUrl = (file: File, maxWidth = 1000, maxHeight = 1000, quality = 0.8) =>
+        new Promise<string>((resolve, reject) => {
+            const image = new Image();
+            const objectUrl = URL.createObjectURL(file);
+
+            image.onload = () => {
+                const canvas = document.createElement('canvas');
+                let { width, height } = image;
+                const widthRatio = maxWidth / width;
+                const heightRatio = maxHeight / height;
+                const scale = Math.min(1, widthRatio, heightRatio);
+                width = Math.round(width * scale);
+                height = Math.round(height * scale);
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    URL.revokeObjectURL(objectUrl);
+                    reject(new Error('Image processing context unavailable.'));
+                    return;
+                }
+
+                ctx.drawImage(image, 0, 0, width, height);
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                URL.revokeObjectURL(objectUrl);
+                resolve(dataUrl);
+            };
+
+            image.onerror = () => {
+                URL.revokeObjectURL(objectUrl);
+                reject(new Error('Unable to process selected image.'));
+            };
+
+            image.src = objectUrl;
+        });
+
+    const handleManualVendorImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+            setManualMessage('Only JPG, PNG, or WEBP images are allowed.');
+            e.currentTarget.value = '';
+            return;
+        }
+
+        if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+            setManualMessage('Image is too large. Max allowed size is 2MB.');
+            e.currentTarget.value = '';
+            return;
+        }
+
+        try {
+            const compressedDataUrl = await compressImageToDataUrl(file);
+            setManualVendorForm((prev) => ({ ...prev, profile_picture: compressedDataUrl }));
+            setManualMessage('Vendor image selected and optimized.');
+        } catch (error) {
+            console.error('Manual vendor image processing failed:', error);
+            setManualMessage('Unable to process selected image.');
+        }
+    };
+
     const handleManualVendorSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setManualMessage('');
@@ -260,6 +326,7 @@ const VendorDatabase = () => {
                 businessSector: '',
                 businessRegion: '',
                 taxId: '',
+                profile_picture: '',
             });
             fetchVendors();
             fetchStats();
@@ -593,6 +660,22 @@ const VendorDatabase = () => {
                     <div className="input-group">
                         <label htmlFor="manualTaxId">Tax ID</label>
                         <input id="manualTaxId" name="taxId" type="text" value={manualVendorForm.taxId} onChange={handleManualVendorChange} />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualProfilePicture">Profile Image</label>
+                        <input
+                            id="manualProfilePicture"
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp"
+                            onChange={handleManualVendorImageUpload}
+                        />
+                        {manualVendorForm.profile_picture && (
+                            <img
+                                src={manualVendorForm.profile_picture}
+                                alt="Vendor preview"
+                                style={{ marginTop: '8px', width: '64px', height: '64px', borderRadius: '999px', objectFit: 'cover' }}
+                            />
+                        )}
                     </div>
                 </div>
 

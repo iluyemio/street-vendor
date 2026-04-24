@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, HttpException } from '@nestjs/common';
 import { UserDto, UpdateUserDto, CreateAdminDto } from './dto';
 import { prisma } from 'src/lib/prisma';
 import * as argon2 from 'argon2';
@@ -81,6 +81,9 @@ export class UserService {
          return user; 
         } catch (error:any) {
             console.log(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
             throw new BadRequestException(this.getDatabaseErrorMessage(error));
         }
     }
@@ -224,6 +227,9 @@ export class UserService {
             return safeUser;
         } catch (error:any) {
             console.log(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
             throw new BadRequestException(this.getDatabaseErrorMessage(error));
         }
     }
@@ -290,6 +296,9 @@ export class UserService {
             };
         } catch (error: any) {
             console.log(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
             throw new BadRequestException(this.getDatabaseErrorMessage(error));
         }
     }

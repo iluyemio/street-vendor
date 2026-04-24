@@ -95,6 +95,7 @@ export class EmailController {
     businessSector?: string;
     businessRegion?: string;
     taxId?: string;
+    profile_picture?: string;
   }) {
     const {
       firstName,
@@ -108,6 +109,7 @@ export class EmailController {
       businessSector,
       businessRegion,
       taxId,
+      profile_picture,
     } = payload;
 
     if (!firstName || !lastName || !email || !organization_name || !expires_at) {
@@ -134,6 +136,7 @@ export class EmailController {
       businessSector,
       businessRegion,
       taxId,
+      profile_picture,
       user_type: 'vendor',
       status: 'VERIFIED' as const,
       vendor_id: vendorId,
