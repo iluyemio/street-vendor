@@ -114,6 +114,9 @@ export class UserService {
 
         } catch (error:any) {
             console.log(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
             throw new BadRequestException('Unable to login. Please check your credentials.');
         }
     }

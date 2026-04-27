@@ -55,7 +55,7 @@ const Apply = () => {
                 setMessage(result.message || 'Application submitted successfully! Check your email for login credentials.');
                 form.reset();
             } else {
-                const errorMessage = result.error || 'Failed to submit application. Please try again.';
+                const errorMessage = result.message || 'Failed to submit application. Please try again.';
                 notifyError(errorMessage);
                 setMessage(errorMessage);
             }
