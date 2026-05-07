@@ -9,6 +9,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 export class UserService {
     constructor(private jwt:JwtService){}
 
+
     private getDatabaseErrorMessage(error: any) {
         if (error instanceof PrismaClientKnownRequestError) {
             if (error.code === 'P2002') {
@@ -71,6 +72,47 @@ export class UserService {
                 businessSector:data.businessSector,
                 businessRegion:data.businessRegion,
                 taxId:data.taxId,
+                dateOfBirth:data.dateOfBirth,
+                governmentIdType:data.governmentIdType,
+                governmentIdFront:data.governmentIdFront,
+                governmentIdBack:data.governmentIdBack,
+                selfiePhoto:data.selfiePhoto,
+                postcode:data.postcode,
+                proofOfAddressUpload:data.proofOfAddressUpload,
+                emergencyContactName:data.emergencyContactName,
+                emergencyContactPhone:data.emergencyContactPhone,
+                preferredDisplayName:data.preferredDisplayName,
+                shortBio:data.shortBio,
+                reasonForSelling:data.reasonForSelling,
+                reasonForSellingCustom:data.reasonForSellingCustom,
+                affiliatedOrganisation:data.affiliatedOrganisation,
+                primarySellingLocations:data.primarySellingLocations,
+                intendedWorkingDays:data.intendedWorkingDays,
+                intendedWorkingHours:data.intendedWorkingHours,
+                productType:data.productType,
+                supervisorName:data.supervisorName,
+                agreeCodeOfConduct:data.agreeCodeOfConduct,
+                agreeApprovedProductsOnly:data.agreeApprovedProductsOnly,
+                agreeDisplayBadge:data.agreeDisplayBadge,
+                agreeSuspensionForBreaches:data.agreeSuspensionForBreaches,
+                gdprConsent:data.gdprConsent,
+                digitalSignature:data.digitalSignature,
+                submissionTimestamp:data.submissionTimestamp,
+                submissionIp:data.submissionIp,
+                isUnder18:data.isUnder18,
+                guardianFullName:data.guardianFullName,
+                guardianContactNumber:data.guardianContactNumber,
+                guardianEmail:data.guardianEmail,
+                guardianConsent:data.guardianConsent,
+                qrCodeData:data.qrCodeData,
+                approvalDate:data.approvalDate,
+                reviewerNotes:data.reviewerNotes,
+                accountStatus:data.accountStatus,
+                emailVerified:data.emailVerified,
+                mobileVerified:data.mobileVerified,
+                emailVerificationCode:data.emailVerificationCode,
+                mobileOtpCode:data.mobileOtpCode,
+                verificationCodeExpiresAt:data.verificationCodeExpiresAt,
                 status:data.status,
                 user_type:data.user_type,
                 vendor_id:data.vendor_id,
@@ -100,6 +142,9 @@ export class UserService {
                 throw new BadRequestException("Invalid Credentials")
             }
             if (await argon2.verify(user.password, password)) {
+                if ((user.user_type === 'user' || user.user_type === 'applicant') && !user.emailVerified) {
+                    throw new BadRequestException('Complete email verification before logging in.');
+                }
                 const token = await this.signinJwt(user.id, user.email);
                 const { password: _, ...safeUser } = user;
                 
@@ -193,6 +238,47 @@ export class UserService {
                 businessSector: data.businessSector,
                 businessRegion: data.businessRegion,
                 taxId: data.taxId,
+                dateOfBirth: data.dateOfBirth,
+                governmentIdType: data.governmentIdType,
+                governmentIdFront: data.governmentIdFront,
+                governmentIdBack: data.governmentIdBack,
+                selfiePhoto: data.selfiePhoto,
+                postcode: data.postcode,
+                proofOfAddressUpload: data.proofOfAddressUpload,
+                emergencyContactName: data.emergencyContactName,
+                emergencyContactPhone: data.emergencyContactPhone,
+                preferredDisplayName: data.preferredDisplayName,
+                shortBio: data.shortBio,
+                reasonForSelling: data.reasonForSelling,
+                reasonForSellingCustom: data.reasonForSellingCustom,
+                affiliatedOrganisation: data.affiliatedOrganisation,
+                primarySellingLocations: data.primarySellingLocations,
+                intendedWorkingDays: data.intendedWorkingDays,
+                intendedWorkingHours: data.intendedWorkingHours,
+                productType: data.productType,
+                supervisorName: data.supervisorName,
+                agreeCodeOfConduct: data.agreeCodeOfConduct,
+                agreeApprovedProductsOnly: data.agreeApprovedProductsOnly,
+                agreeDisplayBadge: data.agreeDisplayBadge,
+                agreeSuspensionForBreaches: data.agreeSuspensionForBreaches,
+                gdprConsent: data.gdprConsent,
+                digitalSignature: data.digitalSignature,
+                submissionTimestamp: data.submissionTimestamp,
+                submissionIp: data.submissionIp,
+                isUnder18: data.isUnder18,
+                guardianFullName: data.guardianFullName,
+                guardianContactNumber: data.guardianContactNumber,
+                guardianEmail: data.guardianEmail,
+                guardianConsent: data.guardianConsent,
+                qrCodeData: data.qrCodeData,
+                approvalDate: data.approvalDate,
+                reviewerNotes: data.reviewerNotes,
+                accountStatus: data.accountStatus,
+                emailVerified: data.emailVerified,
+                mobileVerified: data.mobileVerified,
+                emailVerificationCode: data.emailVerificationCode,
+                mobileOtpCode: data.mobileOtpCode,
+                verificationCodeExpiresAt: data.verificationCodeExpiresAt,
                 user_type: data.user_type,
                 vendor_id: data.vendor_id,
                 expires_at: data.expires_at,
@@ -400,8 +486,17 @@ export class UserService {
                     businessSector: true,
                     businessRegion: true,
                     taxId: true,
+                    preferredDisplayName: true,
+                    shortBio: true,
+                    reasonForSelling: true,
+                    affiliatedOrganisation: true,
+                    primarySellingLocations: true,
+                    intendedWorkingDays: true,
+                    intendedWorkingHours: true,
+                    productType: true,
                     status: true,
                     vendor_id: true,
+                    qrCodeData: true,
                     expires_at: true,
                     created_at: true,
                     updated_at: true
@@ -500,6 +595,46 @@ export class UserService {
             throw new BadRequestException('Failed to promote applicant to vendor');
         }
     }
+
+    async requestEmailVerification(email: string) {
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            throw new BadRequestException('User not found');
+        }
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+        await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                emailVerificationCode: code,
+                verificationCodeExpiresAt: expiresAt,
+            },
+        });
+        return { success: true, message: 'Email verification code generated.', code };
+    }
+
+    async verifyEmailCode(email: string, code: string) {
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            throw new BadRequestException('User not found');
+        }
+        if (!user.emailVerificationCode || user.emailVerificationCode !== code) {
+            throw new BadRequestException('Invalid email verification code.');
+        }
+        if (!user.verificationCodeExpiresAt || user.verificationCodeExpiresAt.getTime() < Date.now()) {
+            throw new BadRequestException('Email verification code has expired.');
+        }
+        await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                emailVerified: true,
+                emailVerificationCode: null,
+            },
+        });
+        return { success: true, message: 'Email verified successfully.' };
+    }
+
+
     async getUserProfile(id: number) {
         try {
             const user = await prisma.user.findUnique({
@@ -517,9 +652,47 @@ export class UserService {
                     businessSector: true,
                     businessRegion: true,
                     taxId: true,
+                    dateOfBirth: true,
+                    governmentIdType: true,
+                    governmentIdFront: true,
+                    governmentIdBack: true,
+                    selfiePhoto: true,
+                    postcode: true,
+                    proofOfAddressUpload: true,
+                    emergencyContactName: true,
+                    emergencyContactPhone: true,
+                    preferredDisplayName: true,
+                    shortBio: true,
+                    reasonForSelling: true,
+                    reasonForSellingCustom: true,
+                    affiliatedOrganisation: true,
+                    primarySellingLocations: true,
+                    intendedWorkingDays: true,
+                    intendedWorkingHours: true,
+                    productType: true,
+                    supervisorName: true,
+                    agreeCodeOfConduct: true,
+                    agreeApprovedProductsOnly: true,
+                    agreeDisplayBadge: true,
+                    agreeSuspensionForBreaches: true,
+                    gdprConsent: true,
+                    digitalSignature: true,
+                    submissionTimestamp: true,
+                    submissionIp: true,
+                    isUnder18: true,
+                    guardianFullName: true,
+                    guardianContactNumber: true,
+                    guardianEmail: true,
+                    guardianConsent: true,
                     status: true,
                     user_type: true,
                     vendor_id: true,
+                    qrCodeData: true,
+                    approvalDate: true,
+                    reviewerNotes: true,
+                    accountStatus: true,
+                    emailVerified: true,
+                    mobileVerified: true,
                     expires_at: true,
                     created_at: true,
                     updated_at: true

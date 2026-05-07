@@ -22,7 +22,40 @@ const VendorDatabase = () => {
     const [manualVendorForm, setManualVendorForm] = useState({
         firstName: '',
         lastName: '',
+        fullLegalName: '',
+        dateOfBirth: '',
+        governmentIdType: '',
+        governmentIdFront: '',
+        governmentIdBack: '',
+        selfiePhoto: '',
+        currentAddress: '',
+        postcode: '',
+        proofOfAddressUpload: '',
+        mobileNumber: '',
         email: '',
+        emergencyContactName: '',
+        emergencyContactPhone: '',
+        preferredDisplayName: '',
+        shortBio: '',
+        reasonForSelling: '',
+        reasonForSellingCustom: '',
+        affiliatedOrganisation: '',
+        primarySellingLocations: '',
+        intendedWorkingDays: '',
+        intendedWorkingHours: '',
+        productType: '',
+        supervisorName: '',
+        agreeCodeOfConduct: false,
+        agreeApprovedProductsOnly: false,
+        agreeDisplayBadge: false,
+        agreeSuspensionForBreaches: false,
+        gdprConsent: false,
+        digitalSignature: '',
+        isUnder18: false,
+        guardianFullName: '',
+        guardianContactNumber: '',
+        guardianEmail: '',
+        guardianConsent: false,
         organization_name: '',
         expires_at: '',
         posterAddress: '',
@@ -226,8 +259,13 @@ const VendorDatabase = () => {
         }
     };
 
-    const handleManualVendorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleManualVendorChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
+        if (e.target instanceof HTMLInputElement && e.target.type === 'checkbox') {
+            const inputTarget = e.target as HTMLInputElement;
+            setManualVendorForm((prev) => ({ ...prev, [name]: inputTarget.checked }));
+            return;
+        }
         setManualVendorForm((prev) => ({ ...prev, [name]: value }));
     };
 
@@ -294,9 +332,39 @@ const VendorDatabase = () => {
         }
     };
 
+    const handleManualVendorDocumentUpload = async (
+        e: React.ChangeEvent<HTMLInputElement>,
+        field: 'governmentIdFront' | 'governmentIdBack' | 'proofOfAddressUpload' | 'selfiePhoto',
+    ) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        try {
+            const compressedDataUrl = file.type.startsWith('image/')
+                ? await compressImageToDataUrl(file)
+                : await new Promise<string>((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : '');
+                    reader.onerror = () => reject(new Error('File read failed'));
+                    reader.readAsDataURL(file);
+                });
+            setManualVendorForm((prev) => ({ ...prev, [field]: compressedDataUrl }));
+        } catch (error) {
+            console.error('Manual vendor document processing failed:', error);
+            setManualMessage('Unable to process selected document.');
+        }
+    };
+
     const handleManualVendorSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setManualMessage('');
+        if (!manualVendorForm.agreeCodeOfConduct || !manualVendorForm.agreeApprovedProductsOnly || !manualVendorForm.agreeDisplayBadge || !manualVendorForm.agreeSuspensionForBreaches || !manualVendorForm.gdprConsent) {
+            setManualMessage('All compliance agreements must be accepted.');
+            return;
+        }
+        if (manualVendorForm.isUnder18 && (!manualVendorForm.guardianFullName || !manualVendorForm.guardianContactNumber || !manualVendorForm.guardianEmail || !manualVendorForm.guardianConsent)) {
+            setManualMessage('Guardian details and consent are required for under-18 vendors.');
+            return;
+        }
         setIsManualSubmitting(true);
         try {
             const response = await fetch(apiUrl('/api/admin/create-vendor-manual'), {
@@ -317,7 +385,40 @@ const VendorDatabase = () => {
             setManualVendorForm({
                 firstName: '',
                 lastName: '',
+                fullLegalName: '',
+                dateOfBirth: '',
+                governmentIdType: '',
+                governmentIdFront: '',
+                governmentIdBack: '',
+                selfiePhoto: '',
+                currentAddress: '',
+                postcode: '',
+                proofOfAddressUpload: '',
+                mobileNumber: '',
                 email: '',
+                emergencyContactName: '',
+                emergencyContactPhone: '',
+                preferredDisplayName: '',
+                shortBio: '',
+                reasonForSelling: '',
+                reasonForSellingCustom: '',
+                affiliatedOrganisation: '',
+                primarySellingLocations: '',
+                intendedWorkingDays: '',
+                intendedWorkingHours: '',
+                productType: '',
+                supervisorName: '',
+                agreeCodeOfConduct: false,
+                agreeApprovedProductsOnly: false,
+                agreeDisplayBadge: false,
+                agreeSuspensionForBreaches: false,
+                gdprConsent: false,
+                digitalSignature: '',
+                isUnder18: false,
+                guardianFullName: '',
+                guardianContactNumber: '',
+                guardianEmail: '',
+                guardianConsent: false,
                 organization_name: '',
                 expires_at: '',
                 posterAddress: '',
@@ -626,12 +727,100 @@ const VendorDatabase = () => {
                         <input id="manualLastName" name="lastName" type="text" value={manualVendorForm.lastName} onChange={handleManualVendorChange} required />
                     </div>
                     <div className="input-group">
+                        <label htmlFor="manualFullLegalName">Full Legal Name</label>
+                        <input id="manualFullLegalName" name="fullLegalName" type="text" value={manualVendorForm.fullLegalName} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualDateOfBirth">Date of Birth</label>
+                        <input id="manualDateOfBirth" name="dateOfBirth" type="date" value={manualVendorForm.dateOfBirth} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualGovernmentIdType">Government ID Type</label>
+                        <select id="manualGovernmentIdType" name="governmentIdType" value={manualVendorForm.governmentIdType} onChange={handleManualVendorChange} required>
+                            <option value="">Select type</option>
+                            <option value="Passport">Passport</option>
+                            <option value="Driving Licence">Driving Licence</option>
+                        </select>
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualCurrentAddress">Current Address</label>
+                        <input id="manualCurrentAddress" name="currentAddress" type="text" value={manualVendorForm.currentAddress} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualPostcode">Postcode</label>
+                        <input id="manualPostcode" name="postcode" type="text" value={manualVendorForm.postcode} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualMobileNumber">Mobile Number</label>
+                        <input id="manualMobileNumber" name="mobileNumber" type="text" value={manualVendorForm.mobileNumber} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
                         <label htmlFor="manualEmail">Email</label>
                         <input id="manualEmail" name="email" type="email" value={manualVendorForm.email} onChange={handleManualVendorChange} required />
                     </div>
                     <div className="input-group">
+                        <label htmlFor="manualEmergencyContactName">Emergency Contact Name</label>
+                        <input id="manualEmergencyContactName" name="emergencyContactName" type="text" value={manualVendorForm.emergencyContactName} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualEmergencyContactPhone">Emergency Contact Phone</label>
+                        <input id="manualEmergencyContactPhone" name="emergencyContactPhone" type="text" value={manualVendorForm.emergencyContactPhone} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
                         <label htmlFor="manualOrganization">Organization / Company</label>
                         <input id="manualOrganization" name="organization_name" type="text" value={manualVendorForm.organization_name} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualPreferredDisplayName">Preferred Display Name</label>
+                        <input id="manualPreferredDisplayName" name="preferredDisplayName" type="text" value={manualVendorForm.preferredDisplayName} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group full-width">
+                        <label htmlFor="manualShortBio">Short Bio</label>
+                        <textarea id="manualShortBio" name="shortBio" value={manualVendorForm.shortBio} onChange={handleManualVendorChange} style={{minHeight: '110px'}} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualReasonForSelling">Reason for Selling</label>
+                        <select id="manualReasonForSelling" name="reasonForSelling" value={manualVendorForm.reasonForSelling} onChange={handleManualVendorChange} required>
+                            <option value="">Select reason</option>
+                            <option value="Income Support">Income Support</option>
+                            <option value="Family Support">Family Support</option>
+                            <option value="Business Growth">Business Growth</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualReasonForSellingCustom">Custom Reason (optional)</label>
+                        <input id="manualReasonForSellingCustom" name="reasonForSellingCustom" type="text" value={manualVendorForm.reasonForSellingCustom} onChange={handleManualVendorChange} />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualAffiliatedOrganisation">Affiliated Organisation</label>
+                        <input id="manualAffiliatedOrganisation" name="affiliatedOrganisation" type="text" value={manualVendorForm.affiliatedOrganisation} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualPrimarySellingLocations">Primary Selling Locations</label>
+                        <input id="manualPrimarySellingLocations" name="primarySellingLocations" type="text" value={manualVendorForm.primarySellingLocations} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualIntendedWorkingDays">Intended Working Days</label>
+                        <input id="manualIntendedWorkingDays" name="intendedWorkingDays" type="text" value={manualVendorForm.intendedWorkingDays} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualIntendedWorkingHours">Intended Working Hours</label>
+                        <input id="manualIntendedWorkingHours" name="intendedWorkingHours" type="text" value={manualVendorForm.intendedWorkingHours} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualProductType">Product Type</label>
+                        <select id="manualProductType" name="productType" value={manualVendorForm.productType} onChange={handleManualVendorChange} required>
+                            <option value="">Select product type</option>
+                            <option value="Food">Food</option>
+                            <option value="Drinks">Drinks</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Crafts">Crafts</option>
+                        </select>
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualSupervisorName">Supervisor / Team Leader Name</label>
+                        <input id="manualSupervisorName" name="supervisorName" type="text" value={manualVendorForm.supervisorName} onChange={handleManualVendorChange} />
                     </div>
                     <div className="input-group">
                         <label htmlFor="manualExpiry">Valid Until</label>
@@ -660,6 +849,53 @@ const VendorDatabase = () => {
                     <div className="input-group">
                         <label htmlFor="manualTaxId">Tax ID</label>
                         <input id="manualTaxId" name="taxId" type="text" value={manualVendorForm.taxId} onChange={handleManualVendorChange} />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualDigitalSignature">Digital Signature</label>
+                        <input id="manualDigitalSignature" name="digitalSignature" type="text" value={manualVendorForm.digitalSignature} onChange={handleManualVendorChange} required />
+                    </div>
+                    <div className="input-group full-width">
+                        <label><input type="checkbox" name="agreeCodeOfConduct" checked={manualVendorForm.agreeCodeOfConduct} onChange={handleManualVendorChange} /> Agree to Code of Conduct</label>
+                        <label><input type="checkbox" name="agreeApprovedProductsOnly" checked={manualVendorForm.agreeApprovedProductsOnly} onChange={handleManualVendorChange} /> Agree to Sell Only Approved Products</label>
+                        <label><input type="checkbox" name="agreeDisplayBadge" checked={manualVendorForm.agreeDisplayBadge} onChange={handleManualVendorChange} /> Agree to Display ID Badge</label>
+                        <label><input type="checkbox" name="agreeSuspensionForBreaches" checked={manualVendorForm.agreeSuspensionForBreaches} onChange={handleManualVendorChange} /> Accept Suspension/Removal for Breaches</label>
+                        <label><input type="checkbox" name="gdprConsent" checked={manualVendorForm.gdprConsent} onChange={handleManualVendorChange} /> GDPR Consent</label>
+                        <label><input type="checkbox" name="isUnder18" checked={manualVendorForm.isUnder18} onChange={handleManualVendorChange} /> Under 18</label>
+                    </div>
+                    {manualVendorForm.isUnder18 && (
+                        <>
+                            <div className="input-group">
+                                <label htmlFor="manualGuardianFullName">Guardian Full Name</label>
+                                <input id="manualGuardianFullName" name="guardianFullName" type="text" value={manualVendorForm.guardianFullName} onChange={handleManualVendorChange} required />
+                            </div>
+                            <div className="input-group">
+                                <label htmlFor="manualGuardianContactNumber">Guardian Contact Number</label>
+                                <input id="manualGuardianContactNumber" name="guardianContactNumber" type="text" value={manualVendorForm.guardianContactNumber} onChange={handleManualVendorChange} required />
+                            </div>
+                            <div className="input-group">
+                                <label htmlFor="manualGuardianEmail">Guardian Email</label>
+                                <input id="manualGuardianEmail" name="guardianEmail" type="email" value={manualVendorForm.guardianEmail} onChange={handleManualVendorChange} required />
+                            </div>
+                            <div className="input-group">
+                                <label><input type="checkbox" name="guardianConsent" checked={manualVendorForm.guardianConsent} onChange={handleManualVendorChange} /> Guardian Consent</label>
+                            </div>
+                        </>
+                    )}
+                    <div className="input-group">
+                        <label htmlFor="manualGovernmentIdFront">Government ID (Front)</label>
+                        <input id="manualGovernmentIdFront" type="file" accept="image/*,.pdf" onChange={(e) => handleManualVendorDocumentUpload(e, 'governmentIdFront')} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualGovernmentIdBack">Government ID (Back)</label>
+                        <input id="manualGovernmentIdBack" type="file" accept="image/*,.pdf" onChange={(e) => handleManualVendorDocumentUpload(e, 'governmentIdBack')} />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualSelfiePhoto">Selfie Photo</label>
+                        <input id="manualSelfiePhoto" type="file" accept="image/*" onChange={(e) => handleManualVendorDocumentUpload(e, 'selfiePhoto')} required />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="manualProofOfAddressUpload">Proof of Address</label>
+                        <input id="manualProofOfAddressUpload" type="file" accept="image/*,.pdf" onChange={(e) => handleManualVendorDocumentUpload(e, 'proofOfAddressUpload')} required />
                     </div>
                     <div className="input-group">
                         <label htmlFor="manualProfilePicture">Profile Image</label>

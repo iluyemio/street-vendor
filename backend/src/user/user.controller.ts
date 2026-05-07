@@ -87,4 +87,15 @@ export class UserController {
     async PromoteToVendor(@Param('id') id: number, @Body() data: { vendor_id: string, expires_at: Date }) {
         return this.userService.promoteToVendor(id, data);
     }
+
+    @Post('user/request-email-verification')
+    async RequestEmailVerification(@Body() data: { email: string }) {
+        return this.userService.requestEmailVerification(data.email);
+    }
+
+    @Post('user/verify-email')
+    async VerifyEmail(@Body() data: { email: string; code: string }) {
+        return this.userService.verifyEmailCode(data.email, data.code);
+    }
+
 }

@@ -26,6 +26,47 @@ model User{
     businessSector String?
     businessRegion String?
     taxId String?
+    dateOfBirth DateTime?
+    governmentIdType String?
+    governmentIdFront String?
+    governmentIdBack String?
+    selfiePhoto String?
+    postcode String?
+    proofOfAddressUpload String?
+    emergencyContactName String?
+    emergencyContactPhone String?
+    preferredDisplayName String?
+    shortBio String?
+    reasonForSelling String?
+    reasonForSellingCustom String?
+    affiliatedOrganisation String?
+    primarySellingLocations String?
+    intendedWorkingDays String?
+    intendedWorkingHours String?
+    productType String?
+    supervisorName String?
+    agreeCodeOfConduct Boolean @default(false)
+    agreeApprovedProductsOnly Boolean @default(false)
+    agreeDisplayBadge Boolean @default(false)
+    agreeSuspensionForBreaches Boolean @default(false)
+    gdprConsent Boolean @default(false)
+    digitalSignature String?
+    submissionTimestamp DateTime?
+    submissionIp String?
+    isUnder18 Boolean @default(false)
+    guardianFullName String?
+    guardianContactNumber String?
+    guardianEmail String?
+    guardianConsent Boolean @default(false)
+    qrCodeData String?
+    approvalDate DateTime?
+    reviewerNotes String?
+    accountStatus String? @default("Active")
+    emailVerified Boolean @default(false)
+    mobileVerified Boolean @default(false)
+    emailVerificationCode String?
+    mobileOtpCode String?
+    verificationCodeExpiresAt DateTime?
     status Status @default(PENDING)
     user_type String
     vendor_id String? @unique
